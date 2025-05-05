@@ -150,9 +150,7 @@ export default function ProductsPage() {
         <DashboardLayout>
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Products
-                    </h1>
+                    <h1 className="text-2xl font-bold text-black">Products</h1>
                     <button
                         onClick={() => router.push("/products/new")}
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
@@ -170,7 +168,7 @@ export default function ProductsPage() {
                             className="relative flex-1"
                         >
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FiSearch className="h-5 w-5 text-gray-400" />
+                                <FiSearch className="h-5 w-5 text-black" />
                             </div>
                             <input
                                 type="text"
@@ -252,7 +250,7 @@ export default function ProductsPage() {
                                 />
                                 <label
                                     htmlFor="lowStock"
-                                    className="ml-2 block text-sm text-gray-900"
+                                    className="ml-2 block text-sm text-black"
                                 >
                                     Low Stock Only
                                 </label>
@@ -266,11 +264,11 @@ export default function ProductsPage() {
                     {products.length === 0 ? (
                         <div className="py-12">
                             <div className="text-center">
-                                <FiFilter className="mx-auto h-12 w-12 text-gray-400" />
-                                <h3 className="mt-2 text-lg font-medium text-gray-900">
+                                <FiFilter className="mx-auto h-12 w-12 text-black" />
+                                <h3 className="mt-2 text-lg font-medium text-black">
                                     No products found
                                 </h3>
-                                <p className="mt-1 text-sm text-gray-500">
+                                <p className="mt-1 text-sm text-black">
                                     {searchTerm ||
                                     selectedCategory ||
                                     showLowStock
@@ -302,37 +300,37 @@ export default function ProductsPage() {
                                     <tr>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Product
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             SKU
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Category
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Price
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Stock
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Actions
                                         </th>
@@ -342,25 +340,25 @@ export default function ProductsPage() {
                                     {products.map((product) => (
                                         <tr key={product.id}>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">
+                                                <div className="text-sm font-medium text-black">
                                                     {product.name}
                                                 </div>
-                                                <div className="text-sm text-gray-500 truncate max-w-xs">
+                                                <div className="text-sm text-black truncate max-w-xs">
                                                     {product.description ||
                                                         "No description"}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {product.sku}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {product.category.name}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-900">
+                                                <div className="text-sm text-black">
                                                     ${product.price.toFixed(2)}
                                                 </div>
-                                                <div className="text-xs text-gray-500">
+                                                <div className="text-xs text-black">
                                                     Cost: $
                                                     {product.costPrice.toFixed(
                                                         2
@@ -430,11 +428,11 @@ export default function ProductsPage() {
                                     <FiTrash2 className="h-6 w-6 text-red-600" />
                                 </div>
                                 <div className="mt-3 text-center sm:mt-5">
-                                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    <h3 className="text-lg leading-6 font-medium text-black">
                                         Delete Product
                                     </h3>
                                     <div className="mt-2">
-                                        <p className="text-sm text-gray-500">
+                                        <p className="text-sm text-black">
                                             Are you sure you want to delete{" "}
                                             {productToDelete.name}? This action
                                             cannot be undone.
@@ -452,7 +450,7 @@ export default function ProductsPage() {
                                 </button>
                                 <button
                                     type="button"
-                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-black hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
                                     onClick={() => setIsDeleteModalOpen(false)}
                                 >
                                     Cancel

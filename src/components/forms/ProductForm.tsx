@@ -176,7 +176,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div className="col-span-2 sm:col-span-1">
                     <label
                         htmlFor="name"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Product Name *
                     </label>
@@ -184,12 +184,12 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         type="text"
                         id="name"
                         {...register("name")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.name ? "border-red-500" : ""
+                        className={`mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                            errors.name ? "border-error" : ""
                         }`}
                     />
                     {errors.name && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.name.message}
                         </p>
                     )}
@@ -198,7 +198,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div className="col-span-2 sm:col-span-1">
                     <label
                         htmlFor="sku"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         SKU *
                     </label>
@@ -206,12 +206,12 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         type="text"
                         id="sku"
                         {...register("sku")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.sku ? "border-red-500" : ""
+                        className={`mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                            errors.sku ? "border-error" : ""
                         }`}
                     />
                     {errors.sku && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.sku.message}
                         </p>
                     )}
@@ -220,7 +220,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div className="col-span-2">
                     <label
                         htmlFor="description"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Description
                     </label>
@@ -228,10 +228,10 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="description"
                         rows={3}
                         {...register("description")}
-                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        className="mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                     />
                     {errors.description && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.description.message}
                         </p>
                     )}
@@ -240,15 +240,15 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div>
                     <label
                         htmlFor="categoryId"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Category *
                     </label>
                     <select
                         id="categoryId"
                         {...register("categoryId")}
-                        className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
-                            errors.categoryId ? "border-red-500" : ""
+                        className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm ${
+                            errors.categoryId ? "border-error" : ""
                         }`}
                     >
                         <option value="">Select a category</option>
@@ -259,7 +259,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         ))}
                     </select>
                     {errors.categoryId && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.categoryId.message}
                         </p>
                     )}
@@ -268,13 +268,13 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div>
                     <label
                         htmlFor="price"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Selling Price *
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span className="text-gray-500 sm:text-sm">$</span>
+                            <span className="text-tertiary sm:text-sm">$</span>
                         </div>
                         <input
                             type="number"
@@ -282,13 +282,13 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             step="0.01"
                             min="0"
                             {...register("price")}
-                            className={`focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md ${
-                                errors.price ? "border-red-500" : ""
+                            className={`focus:ring-primary focus:border-primary block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md ${
+                                errors.price ? "border-error" : ""
                             }`}
                         />
                     </div>
                     {errors.price && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.price.message}
                         </p>
                     )}
@@ -297,13 +297,13 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div>
                     <label
                         htmlFor="costPrice"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Cost Price *
                     </label>
                     <div className="mt-1 relative rounded-md shadow-sm">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <span className="text-gray-500 sm:text-sm">$</span>
+                            <span className="text-tertiary sm:text-sm">$</span>
                         </div>
                         <input
                             type="number"
@@ -311,13 +311,13 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             step="0.01"
                             min="0"
                             {...register("costPrice")}
-                            className={`focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md ${
-                                errors.costPrice ? "border-red-500" : ""
+                            className={`focus:ring-primary focus:border-primary block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md ${
+                                errors.costPrice ? "border-error" : ""
                             }`}
                         />
                     </div>
                     {errors.costPrice && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.costPrice.message}
                         </p>
                     )}
@@ -326,7 +326,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div>
                     <label
                         htmlFor="quantity"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Current Quantity *
                     </label>
@@ -335,12 +335,12 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="quantity"
                         min="0"
                         {...register("quantity")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.quantity ? "border-red-500" : ""
+                        className={`mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                            errors.quantity ? "border-error" : ""
                         }`}
                     />
                     {errors.quantity && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.quantity.message}
                         </p>
                     )}
@@ -349,7 +349,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <div>
                     <label
                         htmlFor="minimumStock"
-                        className="block text-sm font-medium text-gray-700"
+                        className="block text-sm font-medium text-secondary"
                     >
                         Minimum Stock Level *
                     </label>
@@ -358,16 +358,16 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="minimumStock"
                         min="0"
                         {...register("minimumStock")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
-                            errors.minimumStock ? "border-red-500" : ""
+                        className={`mt-1 focus:ring-primary focus:border-primary block w-full shadow-sm sm:text-sm border-gray-300 rounded-md ${
+                            errors.minimumStock ? "border-error" : ""
                         }`}
                     />
                     {errors.minimumStock && (
-                        <p className="mt-1 text-sm text-red-600">
+                        <p className="mt-1 text-sm text-error">
                             {errors.minimumStock.message}
                         </p>
                     )}
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-tertiary">
                         System will alert when stock falls below this value
                     </p>
                 </div>
@@ -377,14 +377,14 @@ export default function ProductForm({ productId }: ProductFormProps) {
                 <button
                     type="button"
                     onClick={() => router.push("/products")}
-                    className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-secondary bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
                     Cancel
                 </button>
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
                 >
                     {isSubmitting
                         ? "Saving..."

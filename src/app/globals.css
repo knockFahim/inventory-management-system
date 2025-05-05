@@ -1,26 +1,77 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+    --background: #ffffff;
+    --foreground: #171717;
+
+    /* Primary brand colors */
+    --primary: #3b82f6; /* blue-500 */
+    --primary-dark: #2563eb; /* blue-600 */
+    --primary-light: #60a5fa; /* blue-400 */
+
+    /* Text colors - all set to black for maximum visibility */
+    --text-primary: #000000; /* black */
+    --text-secondary: #000000; /* black */
+    --text-tertiary: #000000; /* black */
+    --text-disabled: #000000; /* black */
+
+    /* Status colors */
+    --success: #10b981; /* green-500 */
+    --error: #ef4444; /* red-500 */
+    --warning: #f59e0b; /* amber-500 */
+    --info: #3b82f6; /* blue-500 */
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --font-sans: var(--font-geist-sans);
+    --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+    :root {
+        --background: #0a0a0a;
+        --foreground: #ededed;
+
+        /* Dark mode text colors - all set to white for maximum visibility */
+        --text-primary: #ffffff; /* white */
+        --text-secondary: #ffffff; /* white */
+        --text-tertiary: #ffffff; /* white */
+        --text-disabled: #ffffff; /* white */
+    }
+}
+
+/* Add Tailwind utility classes for our custom colors */
+@layer utilities {
+    .text-primary {
+        color: var(--text-primary);
+    }
+    .text-secondary {
+        color: var(--text-secondary);
+    }
+    .text-tertiary {
+        color: var(--text-tertiary);
+    }
+    .text-brand {
+        color: var(--primary);
+    }
+    .text-error {
+        color: var(--error);
+    }
+    .text-success {
+        color: var(--success);
+    }
+    .text-warning {
+        color: var(--warning);
+    }
+    .text-info {
+        color: var(--info);
+    }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: Arial, Helvetica, sans-serif;
 }

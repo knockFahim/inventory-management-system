@@ -145,9 +145,7 @@ export default function DashboardPage() {
         <DashboardLayout>
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                    <h1 className="text-2xl font-bold text-gray-900">
-                        Dashboard
-                    </h1>
+                    <h1 className="text-2xl font-bold text-black">Dashboard</h1>
                     <div className="inline-flex rounded-md shadow-sm">
                         <button
                             type="button"
@@ -155,7 +153,7 @@ export default function DashboardPage() {
                             className={`${
                                 dateRange === "today"
                                     ? "bg-blue-600 text-white"
-                                    : "bg-white text-gray-700"
+                                    : "bg-white text-black"
                             } relative inline-flex items-center px-4 py-2 rounded-l-md border border-gray-300 text-sm font-medium focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500`}
                         >
                             Today
@@ -166,7 +164,7 @@ export default function DashboardPage() {
                             className={`${
                                 dateRange === "week"
                                     ? "bg-blue-600 text-white"
-                                    : "bg-white text-gray-700"
+                                    : "bg-white text-black"
                             } relative inline-flex items-center px-4 py-2 border-t border-b border-gray-300 text-sm font-medium focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500`}
                         >
                             This Week
@@ -177,7 +175,7 @@ export default function DashboardPage() {
                             className={`${
                                 dateRange === "month"
                                     ? "bg-blue-600 text-white"
-                                    : "bg-white text-gray-700"
+                                    : "bg-white text-black"
                             } relative inline-flex items-center px-4 py-2 rounded-r-md border border-gray-300 text-sm font-medium focus:z-10 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500`}
                         >
                             This Month
@@ -196,11 +194,11 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
+                                        <dt className="text-sm font-medium text-black truncate">
                                             Total Products
                                         </dt>
                                         <dd>
-                                            <div className="text-lg font-medium text-gray-900">
+                                            <div className="text-lg font-medium text-black">
                                                 {stats?.totalProducts}
                                             </div>
                                         </dd>
@@ -229,11 +227,11 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
+                                        <dt className="text-sm font-medium text-black truncate">
                                             Low Stock Items
                                         </dt>
                                         <dd>
-                                            <div className="text-lg font-medium text-gray-900">
+                                            <div className="text-lg font-medium text-black">
                                                 {stats?.lowStockProducts}
                                             </div>
                                         </dd>
@@ -262,11 +260,11 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
+                                        <dt className="text-sm font-medium text-black truncate">
                                             Total Sales
                                         </dt>
                                         <dd>
-                                            <div className="text-lg font-medium text-gray-900">
+                                            <div className="text-lg font-medium text-black">
                                                 {stats?.totalSales}
                                             </div>
                                         </dd>
@@ -295,11 +293,11 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt className="text-sm font-medium text-gray-500 truncate">
+                                        <dt className="text-sm font-medium text-black truncate">
                                             Sales Amount
                                         </dt>
                                         <dd>
-                                            <div className="text-lg font-medium text-gray-900">
+                                            <div className="text-lg font-medium text-black">
                                                 ${stats?.salesAmount.toFixed(2)}
                                             </div>
                                         </dd>
@@ -325,10 +323,10 @@ export default function DashboardPage() {
                     {/* Top Products */}
                     <div className="bg-white overflow-hidden shadow rounded-lg">
                         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-                            <h3 className="text-lg font-medium leading-6 text-gray-900">
+                            <h3 className="text-lg font-medium leading-6 text-black">
                                 Top Selling Products
                             </h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            <p className="mt-1 max-w-2xl text-sm text-black">
                                 Products with highest sales volume
                             </p>
                         </div>
@@ -341,11 +339,11 @@ export default function DashboardPage() {
                                     >
                                         <div className="flex items-center">
                                             <FiTrendingUp className="h-5 w-5 text-green-500 mr-3" />
-                                            <span className="font-medium text-gray-900">
+                                            <span className="font-medium text-black">
                                                 {product.name}
                                             </span>
                                         </div>
-                                        <div className="text-sm text-gray-500">
+                                        <div className="text-sm text-black">
                                             {product.quantitySold} units sold
                                         </div>
                                     </li>
@@ -357,10 +355,10 @@ export default function DashboardPage() {
                     {/* Recent Sales */}
                     <div className="bg-white overflow-hidden shadow rounded-lg">
                         <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-                            <h3 className="text-lg font-medium leading-6 text-gray-900">
+                            <h3 className="text-lg font-medium leading-6 text-black">
                                 Recent Sales
                             </h3>
-                            <p className="mt-1 max-w-2xl text-sm text-gray-500">
+                            <p className="mt-1 max-w-2xl text-sm text-black">
                                 Latest sales transactions
                             </p>
                         </div>
@@ -374,19 +372,19 @@ export default function DashboardPage() {
                                         <div className="flex items-center">
                                             <FiClock className="h-5 w-5 text-blue-500 mr-3" />
                                             <div>
-                                                <p className="font-medium text-gray-900">
+                                                <p className="font-medium text-black">
                                                     {sale.invoiceNumber}
                                                 </p>
-                                                <p className="text-sm text-gray-500">
+                                                <p className="text-sm text-black">
                                                     {sale.customerName}
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="flex flex-col items-end">
-                                            <span className="font-medium text-gray-900">
+                                            <span className="font-medium text-black">
                                                 ${sale.amount.toFixed(2)}
                                             </span>
-                                            <span className="text-sm text-gray-500">
+                                            <span className="text-sm text-black">
                                                 {sale.date}
                                             </span>
                                         </div>

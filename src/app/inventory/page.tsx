@@ -267,7 +267,7 @@ export default function InventoryPage() {
         <DashboardLayout>
             <div className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
-                    <h1 className="text-2xl font-bold text-gray-900">
+                    <h1 className="text-2xl font-bold text-black">
                         Inventory Management
                     </h1>
                     <div className="flex space-x-2">
@@ -276,7 +276,7 @@ export default function InventoryPage() {
                             className={`px-4 py-2 text-sm font-medium rounded-md ${
                                 activeTab === "stock"
                                     ? "bg-blue-600 text-white"
-                                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                                    : "bg-white text-black border border-gray-300 hover:bg-gray-50"
                             }`}
                         >
                             Stock Levels
@@ -286,7 +286,7 @@ export default function InventoryPage() {
                             className={`px-4 py-2 text-sm font-medium rounded-md ${
                                 activeTab === "transactions"
                                     ? "bg-blue-600 text-white"
-                                    : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                                    : "bg-white text-black border border-gray-300 hover:bg-gray-50"
                             }`}
                         >
                             Transactions
@@ -298,7 +298,7 @@ export default function InventoryPage() {
                 <div className="bg-white shadow rounded-lg p-4">
                     <form onSubmit={handleSearch} className="relative">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiSearch className="h-5 w-5 text-gray-400" />
+                            <FiSearch className="h-5 w-5 text-black" />
                         </div>
                         <input
                             type="text"
@@ -318,7 +318,7 @@ export default function InventoryPage() {
                 {activeTab === "stock" && (
                     <div className="bg-white shadow overflow-hidden rounded-lg">
                         <div className="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                            <h3 className="text-lg leading-6 font-medium text-black">
                                 Current Stock Levels
                             </h3>
                             <button
@@ -335,43 +335,43 @@ export default function InventoryPage() {
                                     <tr>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Product
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             SKU
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Category
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Current Stock
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Min. Stock
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Status
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Actions
                                         </th>
@@ -380,19 +380,19 @@ export default function InventoryPage() {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {products.map((product) => (
                                         <tr key={product.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
                                                 {product.name}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {product.sku}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {product.category.name}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-black">
                                                 {product.quantity}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center text-black">
                                                 {product.minimumStock}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -431,7 +431,7 @@ export default function InventoryPage() {
                 {activeTab === "transactions" && (
                     <div className="bg-white shadow overflow-hidden rounded-lg">
                         <div className="px-4 py-5 border-b border-gray-200 sm:px-6">
-                            <h3 className="text-lg leading-6 font-medium text-gray-900">
+                            <h3 className="text-lg leading-6 font-medium text-black">
                                 Inventory Transactions
                             </h3>
                         </div>
@@ -441,43 +441,43 @@ export default function InventoryPage() {
                                     <tr>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Date
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Product
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             SKU
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Type
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Quantity
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Reference
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Notes
                                         </th>
@@ -486,15 +486,15 @@ export default function InventoryPage() {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {transactions.map((transaction) => (
                                         <tr key={transaction.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {new Date(
                                                     transaction.createdAt
                                                 ).toLocaleDateString()}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
                                                 {transaction.product.name}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {transaction.product.sku}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
@@ -533,10 +533,10 @@ export default function InventoryPage() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {transaction.reference}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                 {transaction.notes || "-"}
                                             </td>
                                         </tr>
@@ -567,11 +567,11 @@ export default function InventoryPage() {
                         <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
                             <div>
                                 <div className="mt-3 text-center sm:mt-5">
-                                    <h3 className="text-lg leading-6 font-medium text-gray-900">
+                                    <h3 className="text-lg leading-6 font-medium text-black">
                                         Stock Adjustment: {selectedProduct.name}
                                     </h3>
                                     <div className="mt-2">
-                                        <p className="text-sm text-gray-500 mb-4">
+                                        <p className="text-sm text-black mb-4">
                                             Current stock:{" "}
                                             <span className="font-medium">
                                                 {selectedProduct.quantity}
@@ -581,12 +581,12 @@ export default function InventoryPage() {
                                         <div className="mb-4">
                                             <label
                                                 htmlFor="adjustmentQuantity"
-                                                className="block text-sm font-medium text-gray-700 text-left"
+                                                className="block text-sm font-medium text-black text-left"
                                             >
                                                 Adjustment Quantity
                                             </label>
                                             <div className="mt-1 flex rounded-md shadow-sm">
-                                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-gray-500 sm:text-sm">
+                                                <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-gray-300 bg-gray-50 text-black sm:text-sm">
                                                     {adjustmentQuantity > 0 ? (
                                                         <FiTrendingUp className="h-4 w-4" />
                                                     ) : (
@@ -608,7 +608,7 @@ export default function InventoryPage() {
                                                     placeholder="Enter positive or negative value"
                                                 />
                                             </div>
-                                            <p className="mt-1 text-xs text-gray-500 text-left">
+                                            <p className="mt-1 text-xs text-black text-left">
                                                 Use positive values to add
                                                 stock, negative values to remove
                                                 stock
@@ -618,7 +618,7 @@ export default function InventoryPage() {
                                         <div>
                                             <label
                                                 htmlFor="adjustmentReason"
-                                                className="block text-sm font-medium text-gray-700 text-left"
+                                                className="block text-sm font-medium text-black text-left"
                                             >
                                                 Reason
                                             </label>
@@ -650,7 +650,7 @@ export default function InventoryPage() {
                                 </button>
                                 <button
                                     type="button"
-                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
+                                    className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-black hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:mt-0 sm:col-start-1 sm:text-sm"
                                     onClick={() => setIsStockModalOpen(false)}
                                 >
                                     Cancel
