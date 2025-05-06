@@ -3,14 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import prisma from "@/lib/db";
 
-interface RouteParams {
-    params: {
-        id: string;
-    };
-}
-
 // GET /api/sales/[id] - Get a single sale by ID
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -64,7 +61,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 // PUT /api/sales/[id] - Update a sale
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -158,7 +158,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/sales/[id] - Delete a sale
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {

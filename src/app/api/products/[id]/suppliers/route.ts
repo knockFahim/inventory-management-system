@@ -2,14 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { authorizeRole } from "@/lib/auth";
 
-interface RouteParams {
-    params: {
-        id: string;
-    };
-}
-
 // GET /api/products/[id]/suppliers - Get all suppliers for a product
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const { id } = params;
 
@@ -44,7 +41,10 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 }
 
 // POST /api/products/[id]/suppliers - Add a supplier to a product
-export async function POST(req: NextRequest, { params }: RouteParams) {
+export async function POST(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         // Authorization check - only admin and manager can associate suppliers with products
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -146,7 +146,10 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/products/[id]/suppliers?supplierId=xxx - Remove a supplier from a product
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         // Authorization check - only admin can remove supplier associations
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -203,7 +206,10 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
 }
 
 // PATCH /api/products/[id]/suppliers/[supplierId] - Update a product-supplier relationship
-export async function PATCH(req: NextRequest, { params }: RouteParams) {
+export async function PATCH(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         // Authorization check - only admin and manager can update supplier associations
         const authError = await authorizeRole(req, NextResponse.next(), [

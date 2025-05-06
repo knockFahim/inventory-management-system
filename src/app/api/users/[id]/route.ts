@@ -4,14 +4,11 @@ import { authOptions } from "@/lib/authOptions";
 import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 
-interface RouteParams {
-    params: {
-        id: string;
-    };
-}
-
 // GET /api/users/[id] - Get a specific user by ID
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const { id } = params;
 
@@ -65,7 +62,10 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 }
 
 // PUT /api/users/[id] - Update a specific user
-export async function PUT(req: NextRequest, { params }: RouteParams) {
+export async function PUT(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const { id } = params;
 
@@ -211,7 +211,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/users/[id] - Delete a specific user
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const { id } = params;
 

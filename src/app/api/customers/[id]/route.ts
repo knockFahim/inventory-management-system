@@ -3,14 +3,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/authOptions";
 import prisma from "@/lib/db";
 
-interface RouteParams {
-    params: {
-        id: string;
-    };
-}
-
 // GET /api/customers/[id] - Get a specific customer by ID
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -51,7 +48,10 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 // PUT /api/customers/[id] - Update a customer
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {
@@ -122,7 +122,10 @@ export async function PUT(request: Request, { params }: RouteParams) {
 }
 
 // DELETE /api/customers/[id] - Delete a customer
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+    request: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         const session = await getServerSession(authOptions);
         if (!session) {

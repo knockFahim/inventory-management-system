@@ -2,16 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { authorizeRole } from "@/lib/auth";
 
-interface RouteParams {
-    params: {
-        id: string;
-    };
-}
-
 // GET /api/products/[id] - Get a specific product
-export async function GET(req: NextRequest, { params }: RouteParams) {
+export async function GET(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
-        const { id } = await Promise.resolve(params);
+        const { id } = params;
 
         // First try to get the product with the full include
         try {
@@ -71,7 +68,10 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
 }
 
 // PUT /api/products/[id] - Update a product
-export async function PUT(req: NextRequest, { params }: RouteParams) {
+export async function PUT(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         // Authorization check - only admin and manager can update products
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -80,7 +80,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         ]);
         if (authError) return authError;
 
-        const { id } = await Promise.resolve(params);
+        const { id } = params;
         const data = await req.json();
 
         // Check if product exists
@@ -154,7 +154,10 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
 }
 
 // DELETE /api/products/[id] - Delete a product
-export async function DELETE(req: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+    req: NextRequest,
+    { params }: { params: { id: string } }
+) {
     try {
         // Authorization check - only admin can delete products
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -162,7 +165,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         ]);
         if (authError) return authError;
 
-        const { id } = await Promise.resolve(params);
+        const { id } = params;
 
         // Check if product exists
         const existingProduct = await prisma.product.findUnique({
