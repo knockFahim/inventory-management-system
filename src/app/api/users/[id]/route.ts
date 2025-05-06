@@ -6,7 +6,7 @@ import bcrypt from "bcryptjs";
 
 // GET /api/users/[id] - Get a specific user by ID
 export async function GET(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -63,7 +63,7 @@ export async function GET(
 
 // PUT /api/users/[id] - Update a specific user
 export async function PUT(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -212,7 +212,7 @@ export async function PUT(
 
 // DELETE /api/users/[id] - Delete a specific user
 export async function DELETE(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {

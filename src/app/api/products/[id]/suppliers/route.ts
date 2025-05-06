@@ -4,7 +4,7 @@ import { authorizeRole } from "@/lib/auth";
 
 // GET /api/products/[id]/suppliers - Get all suppliers for a product
 export async function GET(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -42,7 +42,7 @@ export async function GET(
 
 // POST /api/products/[id]/suppliers - Add a supplier to a product
 export async function POST(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -147,7 +147,7 @@ export async function POST(
 
 // DELETE /api/products/[id]/suppliers?supplierId=xxx - Remove a supplier from a product
 export async function DELETE(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -207,7 +207,7 @@ export async function DELETE(
 
 // PATCH /api/products/[id]/suppliers/[supplierId] - Update a product-supplier relationship
 export async function PATCH(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {

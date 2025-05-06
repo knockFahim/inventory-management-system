@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/authOptions";
 
 // GET /api/suppliers/[id] - Get a specific supplier
 export async function GET(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -68,7 +68,7 @@ export async function GET(
 
 // PUT /api/suppliers/[id] - Update a supplier
 export async function PUT(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -136,7 +136,7 @@ export async function PUT(
 
 // DELETE /api/suppliers/[id] - Delete a supplier
 export async function DELETE(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {

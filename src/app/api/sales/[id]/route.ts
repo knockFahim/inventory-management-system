@@ -5,7 +5,7 @@ import prisma from "@/lib/db";
 
 // GET /api/sales/[id] - Get a single sale by ID
 export async function GET(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -62,7 +62,7 @@ export async function GET(
 
 // PUT /api/sales/[id] - Update a sale
 export async function PUT(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -159,7 +159,7 @@ export async function PUT(
 
 // DELETE /api/sales/[id] - Delete a sale
 export async function DELETE(
-    request: NextRequest,
+    request: Request,
     { params }: { params: { id: string } }
 ) {
     try {

@@ -4,7 +4,7 @@ import { authorizeRole } from "@/lib/auth";
 
 // GET /api/products/[id] - Get a specific product
 export async function GET(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -69,7 +69,7 @@ export async function GET(
 
 // PUT /api/products/[id] - Update a product
 export async function PUT(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
@@ -155,7 +155,7 @@ export async function PUT(
 
 // DELETE /api/products/[id] - Delete a product
 export async function DELETE(
-    req: NextRequest,
+    req: Request,
     { params }: { params: { id: string } }
 ) {
     try {
