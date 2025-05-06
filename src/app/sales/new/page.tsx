@@ -12,6 +12,7 @@ interface Customer {
     name: string;
     email?: string;
     phone?: string;
+    isNew?: boolean;
 }
 
 interface Product {
@@ -45,6 +46,9 @@ export default function NewSalePage() {
 
     // Form state
     const [customerId, setCustomerId] = useState("");
+    const [isNewCustomer, setIsNewCustomer] = useState(false);
+    const [newCustomerName, setNewCustomerName] = useState("");
+    const [newCustomerPhone, setNewCustomerPhone] = useState("");
     const [date, setDate] = useState(new Date().toISOString().substring(0, 10));
     const [paymentMethod, setPaymentMethod] = useState("CASH");
     const [saleStatus, setSaleStatus] = useState("PENDING");
@@ -72,15 +76,26 @@ export default function NewSalePage() {
         if (productSearch.trim() === "") {
             setFilteredProducts(products);
         } else {
-            const filtered = products.filter(
-                (product) =>
-                    product.name
-                        .toLowerCase()
-                        .includes(productSearch.toLowerCase()) ||
-                    product.sku
-                        .toLowerCase()
-                        .includes(productSearch.toLowerCase())
-            );
+            const searchTerm = productSearch.toLowerCase().trim();
+            console.log("Searching for:", searchTerm);
+            console.log("Total products:", products.length);
+
+            const filtered = products.filter((product) => {
+                const nameMatch = product.name
+                    .toLowerCase()
+                    .includes(searchTerm);
+                const skuMatch = product.sku.toLowerCase().includes(searchTerm);
+
+                console.log(
+                    `Product: ${product.name}, SKU: ${product.sku}, Match: ${
+                        nameMatch || skuMatch
+                    }`
+                );
+
+                return nameMatch || skuMatch;
+            });
+
+            console.log("Filtered products:", filtered.length);
             setFilteredProducts(filtered);
         }
     }, [productSearch, products]);
@@ -102,13 +117,18 @@ export default function NewSalePage() {
     const fetchProducts = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch("/api/products?inStock=true");
+            console.log("Fetching products...");
+            const response = await fetch("/api/products");
+
             if (!response.ok) {
                 throw new Error("Failed to fetch products");
             }
+
             const data = await response.json();
-            setProducts(data.products || []);
-            setFilteredProducts(data.products || []);
+            console.log(`Fetched ${data.length} products`);
+
+            setProducts(data || []);
+            setFilteredProducts(data || []);
         } catch (error) {
             console.error("Error fetching products:", error);
             toast.error("Failed to load products");
@@ -253,8 +273,13 @@ export default function NewSalePage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!customerId) {
-            toast.error("Please select a customer");
+        if (!customerId && !isNewCustomer) {
+            toast.error("Please select a customer or add a new one");
+            return;
+        }
+
+        if (isNewCustomer && !newCustomerName) {
+            toast.error("Please enter the new customer's name");
             return;
         }
 
@@ -267,7 +292,10 @@ export default function NewSalePage() {
             setIsSubmitting(true);
 
             const saleData = {
-                customerId,
+                customerId: isNewCustomer ? undefined : customerId,
+                newCustomer: isNewCustomer
+                    ? { name: newCustomerName, phone: newCustomerPhone }
+                    : undefined,
                 date,
                 paymentMethod,
                 status: saleStatus,
@@ -372,7 +400,8 @@ export default function NewSalePage() {
                                         setCustomerId(e.target.value)
                                     }
                                     className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
-                                    required
+                                    disabled={isNewCustomer}
+                                    required={!isNewCustomer}
                                 >
                                     <option value="">Select Customer</option>
                                     {customers.map((customer) => (
@@ -384,7 +413,72 @@ export default function NewSalePage() {
                                         </option>
                                     ))}
                                 </select>
+                                <div className="mt-2 flex items-center">
+                                    <input
+                                        type="checkbox"
+                                        id="isNewCustomer"
+                                        checked={isNewCustomer}
+                                        onChange={(e) =>
+                                            setIsNewCustomer(e.target.checked)
+                                        }
+                                        className="mr-2"
+                                    />
+                                    <label
+                                        htmlFor="isNewCustomer"
+                                        className="text-sm text-gray-700"
+                                    >
+                                        Add New Customer
+                                    </label>
+                                </div>
                             </div>
+
+                            {isNewCustomer && (
+                                <>
+                                    <div>
+                                        <label
+                                            htmlFor="newCustomerName"
+                                            className="block text-sm font-medium text-gray-700 mb-1"
+                                        >
+                                            New Customer Name{" "}
+                                            <span className="text-red-500">
+                                                *
+                                            </span>
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="newCustomerName"
+                                            value={newCustomerName}
+                                            onChange={(e) =>
+                                                setNewCustomerName(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                            required
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label
+                                            htmlFor="newCustomerPhone"
+                                            className="block text-sm font-medium text-gray-700 mb-1"
+                                        >
+                                            New Customer Phone
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="newCustomerPhone"
+                                            value={newCustomerPhone}
+                                            onChange={(e) =>
+                                                setNewCustomerPhone(
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                        />
+                                    </div>
+                                </>
+                            )}
 
                             <div>
                                 <label
@@ -511,7 +605,7 @@ export default function NewSalePage() {
                                 <div className="relative">
                                     <input
                                         type="text"
-                                        placeholder="Search products"
+                                        placeholder="Search products by name or SKU"
                                         value={productSearch}
                                         onChange={(e) =>
                                             setProductSearch(e.target.value)
@@ -533,20 +627,13 @@ export default function NewSalePage() {
                                                                 setProductSearch(
                                                                     product.name
                                                                 );
-                                                                // Close dropdown
-                                                                setTimeout(
-                                                                    () =>
-                                                                        setProductSearch(
-                                                                            ""
-                                                                        ),
-                                                                    100
-                                                                );
+                                                                // Don't clear the search - keep the selected product visible
                                                             }}
                                                         >
-                                                            <div className="font-medium">
+                                                            <div className="font-medium text-black">
                                                                 {product.name}
                                                             </div>
-                                                            <div className="text-xs text-gray-500 flex justify-between">
+                                                            <div className="text-xs text-black flex justify-between">
                                                                 <span>
                                                                     SKU:{" "}
                                                                     {
@@ -569,6 +656,14 @@ export default function NewSalePage() {
                                                         </div>
                                                     )
                                                 )}
+                                            </div>
+                                        )}
+                                    {productSearch &&
+                                        filteredProducts.length === 0 && (
+                                            <div className="absolute z-10 w-full mt-1 bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
+                                                <div className="p-2 text-sm text-gray-500 text-center">
+                                                    No products found
+                                                </div>
                                             </div>
                                         )}
                                 </div>
@@ -634,31 +729,31 @@ export default function NewSalePage() {
                                     <tr>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Product
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Quantity
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Price
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Total
                                         </th>
                                         <th
                                             scope="col"
-                                            className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            className="px-6 py-3 text-right text-xs font-medium text-black uppercase tracking-wider"
                                         >
                                             Actions
                                         </th>
@@ -718,7 +813,7 @@ export default function NewSalePage() {
                                                         className="w-24 pl-3 pr-10 py-1 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                                     />
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                                                     $
                                                     {item.totalPrice.toFixed(2)}
                                                 </td>
@@ -742,8 +837,8 @@ export default function NewSalePage() {
 
                         {/* Summary */}
                         {items.length > 0 && (
-                            <div className="border-t pt-4">
-                                <div className="flex flex-col space-y-2 text-sm md:text-base">
+                            <div className="border-t border-gray-200 pt-4">
+                                <div className="flex flex-col space-y-2 text-sm md:text-base text-black">
                                     <div className="flex justify-between">
                                         <span>Subtotal:</span>
                                         <span>
@@ -765,7 +860,7 @@ export default function NewSalePage() {
                                             ${calculateTaxAmount().toFixed(2)}
                                         </span>
                                     </div>
-                                    <div className="flex justify-between font-bold text-lg">
+                                    <div className="flex justify-between font-bold text-lg text-black">
                                         <span>Total:</span>
                                         <span>
                                             ${calculateTotal().toFixed(2)}

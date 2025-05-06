@@ -45,9 +45,13 @@ export default function InventoryPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
+    const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [transactions, setTransactions] = useState<InventoryTransaction[]>(
         []
     );
+    const [filteredTransactions, setFilteredTransactions] = useState<
+        InventoryTransaction[]
+    >([]);
     const [isLoading, setIsLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<"stock" | "transactions">(
         "stock"
@@ -59,6 +63,7 @@ export default function InventoryPage() {
     );
     const [adjustmentQuantity, setAdjustmentQuantity] = useState<number>(0);
     const [adjustmentReason, setAdjustmentReason] = useState<string>("");
+    const [isTransactionsLoading, setIsTransactionsLoading] = useState(false);
 
     useEffect(() => {
         if (status === "unauthenticated") {
@@ -77,52 +82,19 @@ export default function InventoryPage() {
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            // In a real app, this would fetch from the products API
-            // For now, we'll use sample data
-            const mockProducts: Product[] = [
-                {
-                    id: "1",
-                    name: "Rice (5kg)",
-                    sku: "RC-001",
-                    quantity: 15,
-                    minimumStock: 10,
-                    category: { name: "Groceries" },
-                },
-                {
-                    id: "2",
-                    name: "Cooking Oil (1L)",
-                    sku: "OIL-002",
-                    quantity: 8,
-                    minimumStock: 15,
-                    category: { name: "Groceries" },
-                },
-                {
-                    id: "3",
-                    name: "Flour (1kg)",
-                    sku: "FL-003",
-                    quantity: 20,
-                    minimumStock: 8,
-                    category: { name: "Groceries" },
-                },
-                {
-                    id: "4",
-                    name: "Sugar (1kg)",
-                    sku: "SG-004",
-                    quantity: 6,
-                    minimumStock: 12,
-                    category: { name: "Groceries" },
-                },
-                {
-                    id: "5",
-                    name: "Milk Powder (500g)",
-                    sku: "MP-005",
-                    quantity: 4,
-                    minimumStock: 10,
-                    category: { name: "Dairy" },
-                },
-            ];
+            // Fetch real products from the API
+            console.log("Fetching products for inventory...");
+            const response = await fetch("/api/products");
 
-            setProducts(mockProducts);
+            if (!response.ok) {
+                throw new Error("Failed to fetch products");
+            }
+
+            const data = await response.json();
+            console.log(`Fetched ${data.length} products for inventory`);
+
+            setProducts(data || []);
+            setFilteredProducts(data || []);
         } catch (error) {
             console.error("Error fetching products:", error);
             toast.error("Failed to load inventory data");
@@ -132,71 +104,66 @@ export default function InventoryPage() {
     };
 
     const fetchTransactions = async () => {
+        setIsTransactionsLoading(true);
         try {
-            // In a real app, this would fetch from an inventory transactions API
-            // For now, we'll use sample data
-            const mockTransactions: InventoryTransaction[] = [
-                {
-                    id: "1",
-                    productId: "1",
-                    product: { name: "Rice (5kg)", sku: "RC-001" },
-                    quantity: 25,
-                    type: "PURCHASE",
-                    reference: "PO-001",
-                    createdAt: "2025-05-01T10:30:00Z",
-                },
-                {
-                    id: "2",
-                    productId: "1",
-                    product: { name: "Rice (5kg)", sku: "RC-001" },
-                    quantity: -10,
-                    type: "SALE",
-                    reference: "S-001",
-                    createdAt: "2025-05-02T14:45:00Z",
-                },
-                {
-                    id: "3",
-                    productId: "2",
-                    product: { name: "Cooking Oil (1L)", sku: "OIL-002" },
-                    quantity: 15,
-                    type: "PURCHASE",
-                    reference: "PO-002",
-                    createdAt: "2025-05-03T09:15:00Z",
-                },
-                {
-                    id: "4",
-                    productId: "3",
-                    product: { name: "Flour (1kg)", sku: "FL-003" },
-                    quantity: -5,
-                    type: "SALE",
-                    reference: "S-002",
-                    createdAt: "2025-05-04T16:20:00Z",
-                },
-                {
-                    id: "5",
-                    productId: "5",
-                    product: { name: "Milk Powder (500g)", sku: "MP-005" },
-                    quantity: -2,
-                    type: "ADJUSTMENT",
-                    reference: "ADJ-001",
-                    notes: "Damaged stock",
-                    createdAt: "2025-05-04T17:30:00Z",
-                },
-            ];
+            // Fetch real inventory transactions from the API
+            console.log("Fetching inventory transactions...");
+            const response = await fetch("/api/inventory?limit=100");
 
-            setTransactions(mockTransactions);
+            if (!response.ok) {
+                throw new Error("Failed to fetch inventory transactions");
+            }
+
+            const data = await response.json();
+            console.log(`Fetched ${data.length} inventory transactions`);
+
+            setTransactions(data || []);
+            setFilteredTransactions(data || []);
         } catch (error) {
             console.error("Error fetching transactions:", error);
+            toast.error("Failed to load inventory transactions");
+        } finally {
+            setIsTransactionsLoading(false);
         }
     };
 
+    // Client-side filtering based on search term
+    useEffect(() => {
+        if (searchTerm === "") {
+            setFilteredProducts(products);
+            setFilteredTransactions(transactions);
+            return;
+        }
+
+        const lowerSearchTerm = searchTerm.toLowerCase();
+
+        // Filter products
+        const matchingProducts = products.filter(
+            (product) =>
+                product.name.toLowerCase().includes(lowerSearchTerm) ||
+                product.sku.toLowerCase().includes(lowerSearchTerm)
+        );
+        setFilteredProducts(matchingProducts);
+
+        // Filter transactions
+        const matchingTransactions = transactions.filter(
+            (transaction) =>
+                transaction.product.name
+                    .toLowerCase()
+                    .includes(lowerSearchTerm) ||
+                transaction.product.sku
+                    .toLowerCase()
+                    .includes(lowerSearchTerm) ||
+                transaction.reference.toLowerCase().includes(lowerSearchTerm) ||
+                (transaction.notes &&
+                    transaction.notes.toLowerCase().includes(lowerSearchTerm))
+        );
+        setFilteredTransactions(matchingTransactions);
+    }, [searchTerm, products, transactions]);
+
     const handleSearch = (event: React.FormEvent) => {
         event.preventDefault();
-        // Filter products or transactions based on search term
-        // In a real app, this would make an API call with the search term
-        toast.info(
-            "Search functionality would filter results based on your query"
-        );
+        // No need to do anything here as the useEffect will handle filtering
     };
 
     const openStockAdjustment = (product: Product) => {
@@ -210,25 +177,63 @@ export default function InventoryPage() {
         if (!selectedProduct) return;
 
         try {
-            // In a real app, this would make an API call to adjust inventory
+            // Validate adjustment
+            if (adjustmentQuantity === 0) {
+                toast.error("Adjustment quantity cannot be zero");
+                return;
+            }
+
+            if (!adjustmentReason.trim()) {
+                toast.error("Please provide a reason for the adjustment");
+                return;
+            }
+
+            // This would be replaced with a real API call in a production app
+            const updatedQuantity =
+                selectedProduct.quantity + adjustmentQuantity;
+
+            // Don't allow negative stock
+            if (updatedQuantity < 0) {
+                toast.error("Cannot adjust to negative stock quantity");
+                return;
+            }
+
+            // In a real app, we would call an API endpoint to adjust the stock
+            // For now, we'll just update the UI and add a transaction
             toast.success(
                 `Adjusted stock for ${selectedProduct.name} by ${
                     adjustmentQuantity > 0 ? "+" : ""
                 }${adjustmentQuantity}`
             );
 
-            // Update local state to reflect changes
-            setProducts(
-                products.map((p) => {
-                    if (p.id === selectedProduct.id) {
-                        return {
-                            ...p,
-                            quantity: p.quantity + adjustmentQuantity,
-                        };
-                    }
-                    return p;
-                })
-            );
+            // Update both products and filteredProducts arrays
+            const updatedProducts = products.map((p) => {
+                if (p.id === selectedProduct.id) {
+                    return {
+                        ...p,
+                        quantity: updatedQuantity,
+                    };
+                }
+                return p;
+            });
+
+            setProducts(updatedProducts);
+
+            // Apply the same filter to maintain consistency
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            if (searchTerm) {
+                setFilteredProducts(
+                    updatedProducts.filter(
+                        (product) =>
+                            product.name
+                                .toLowerCase()
+                                .includes(lowerSearchTerm) ||
+                            product.sku.toLowerCase().includes(lowerSearchTerm)
+                    )
+                );
+            } else {
+                setFilteredProducts(updatedProducts);
+            }
 
             // Add to transactions list
             const newTransaction: InventoryTransaction = {
@@ -245,7 +250,33 @@ export default function InventoryPage() {
                 createdAt: new Date().toISOString(),
             };
 
-            setTransactions([newTransaction, ...transactions]);
+            const updatedTransactions = [newTransaction, ...transactions];
+            setTransactions(updatedTransactions);
+
+            // Apply the same filter to maintain consistency
+            if (searchTerm) {
+                setFilteredTransactions(
+                    updatedTransactions.filter(
+                        (transaction) =>
+                            transaction.product.name
+                                .toLowerCase()
+                                .includes(lowerSearchTerm) ||
+                            transaction.product.sku
+                                .toLowerCase()
+                                .includes(lowerSearchTerm) ||
+                            transaction.reference
+                                .toLowerCase()
+                                .includes(lowerSearchTerm) ||
+                            (transaction.notes &&
+                                transaction.notes
+                                    .toLowerCase()
+                                    .includes(lowerSearchTerm))
+                    )
+                );
+            } else {
+                setFilteredTransactions(updatedTransactions);
+            }
+
             setIsStockModalOpen(false);
         } catch (error) {
             console.error("Error adjusting stock:", error);
@@ -304,7 +335,7 @@ export default function InventoryPage() {
                             type="text"
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            className="block w-full pl-10 pr-3 py-4 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             placeholder={
                                 activeTab === "stock"
                                     ? "Search products by name or SKU"
@@ -378,7 +409,7 @@ export default function InventoryPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {products.map((product) => (
+                                    {filteredProducts.map((product) => (
                                         <tr key={product.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
                                                 {product.name}
@@ -435,128 +466,147 @@ export default function InventoryPage() {
                                 Inventory Transactions
                             </h3>
                         </div>
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Date
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Product
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            SKU
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Type
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Quantity
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Reference
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
-                                        >
-                                            Notes
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {transactions.map((transaction) => (
-                                        <tr key={transaction.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                                                {new Date(
-                                                    transaction.createdAt
-                                                ).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
-                                                {transaction.product.name}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                                                {transaction.product.sku}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                <span
-                                                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                          ${
-                              transaction.type === "PURCHASE"
-                                  ? "bg-green-100 text-green-800"
-                                  : transaction.type === "SALE"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : transaction.type === "ADJUSTMENT"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : transaction.type === "RETURN"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : "bg-red-100 text-red-800"
-                          }`}
-                                                >
-                                                    {transaction.type.replace(
-                                                        "_",
-                                                        " "
-                                                    )}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
-                                                <div className="flex justify-center items-center space-x-1">
-                                                    {transaction.quantity >
-                                                    0 ? (
-                                                        <FiArrowUp className="h-4 w-4 text-green-600" />
-                                                    ) : (
-                                                        <FiArrowDown className="h-4 w-4 text-red-600" />
-                                                    )}
-                                                    <span>
-                                                        {Math.abs(
-                                                            transaction.quantity
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                                                {transaction.reference}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
-                                                {transaction.notes || "-"}
-                                            </td>
+                        {isTransactionsLoading ? (
+                            <div className="flex justify-center items-center p-10">
+                                <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500"></div>
+                            </div>
+                        ) : filteredTransactions.length === 0 ? (
+                            <div className="text-center p-10">
+                                <p className="text-gray-500">
+                                    No inventory transactions found
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Date
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Product
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                SKU
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Type
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-center text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Quantity
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Reference
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-black uppercase tracking-wider"
+                                            >
+                                                Notes
+                                            </th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {filteredTransactions.map(
+                                            (transaction) => (
+                                                <tr key={transaction.id}>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                                                        {new Date(
+                                                            transaction.createdAt
+                                                        ).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">
+                                                        {transaction.product
+                                                            ?.name ||
+                                                            "Unknown Product"}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                                                        {transaction.product
+                                                            ?.sku || "N/A"}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                        <span
+                                                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                  ${
+                                      transaction.type === "PURCHASE"
+                                          ? "bg-green-100 text-green-800"
+                                          : transaction.type === "SALE"
+                                          ? "bg-blue-100 text-blue-800"
+                                          : transaction.type === "ADJUSTMENT"
+                                          ? "bg-yellow-100 text-yellow-800"
+                                          : transaction.type === "RETURN"
+                                          ? "bg-purple-100 text-purple-800"
+                                          : "bg-red-100 text-red-800"
+                                  }`}
+                                                        >
+                                                            {transaction.type.replace(
+                                                                "_",
+                                                                " "
+                                                            )}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-center">
+                                                        <div className="flex justify-center items-center space-x-1">
+                                                            {transaction.quantity >
+                                                            0 ? (
+                                                                <FiArrowUp className="h-4 w-4 text-green-600" />
+                                                            ) : (
+                                                                <FiArrowDown className="h-4 w-4 text-red-600" />
+                                                            )}
+                                                            <span>
+                                                                {Math.abs(
+                                                                    transaction.quantity
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                                                        {transaction.reference}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
+                                                        {transaction.notes ||
+                                                            "-"}
+                                                    </td>
+                                                </tr>
+                                            )
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>
 
             {/* Stock Adjustment Modal */}
             {isStockModalOpen && selectedProduct && (
-                <div className="fixed z-10 inset-0 overflow-y-auto">
+                <div className="fixed z-50 inset-0 overflow-y-auto">
                     <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         <div
                             className="fixed inset-0 transition-opacity"
                             aria-hidden="true"
+                            onClick={() => setIsStockModalOpen(false)}
                         >
-                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                            <div className="absolute inset-0 bg-gray-500 opacity-50"></div>
                         </div>
                         <span
                             className="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -564,7 +614,7 @@ export default function InventoryPage() {
                         >
                             &#8203;
                         </span>
-                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 relative z-50">
                             <div>
                                 <div className="mt-3 text-center sm:mt-5">
                                     <h3 className="text-lg leading-6 font-medium text-black">
@@ -604,7 +654,7 @@ export default function InventoryPage() {
                                                             ) || 0
                                                         )
                                                     }
-                                                    className="flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300"
+                                                    className="flex-1 focus:ring-blue-500 focus:border-blue-500 block w-full min-w-0 rounded-none rounded-r-md sm:text-sm border-gray-300 py-3 px-4"
                                                     placeholder="Enter positive or negative value"
                                                 />
                                             </div>
@@ -632,7 +682,7 @@ export default function InventoryPage() {
                                                         )
                                                     }
                                                     rows={3}
-                                                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                                    className="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md py-3 px-4"
                                                     placeholder="Explain the reason for this adjustment"
                                                 />
                                             </div>

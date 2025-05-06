@@ -52,7 +52,8 @@ interface PaginationData {
 export default function SalesPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [sales, setSales] = useState<Sale[]>([]);
+    const [allSales, setAllSales] = useState<Sale[]>([]);
+    const [filteredSales, setFilteredSales] = useState<Sale[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [dateFilter, setDateFilter] = useState("");
@@ -65,6 +66,9 @@ export default function SalesPage() {
         totalPages: 1,
     });
 
+    // Items per page for client-side pagination
+    const ITEMS_PER_PAGE = 10;
+
     useEffect(() => {
         if (status === "unauthenticated") {
             router.push("/login");
@@ -73,45 +77,83 @@ export default function SalesPage() {
 
     useEffect(() => {
         if (status === "authenticated") {
-            fetchSales();
+            fetchAllSales();
         }
-    }, [status, currentPage, searchTerm, dateFilter, statusFilter]);
+    }, [status]);
 
-    const fetchSales = async () => {
+    const fetchAllSales = async () => {
         setIsLoading(true);
         try {
-            // Build query string with filters
-            const params = new URLSearchParams();
-            params.append("page", currentPage.toString());
-            params.append("limit", "10");
-
-            if (searchTerm) {
-                params.append("query", searchTerm);
-            }
-
-            if (dateFilter) {
-                params.append("date", dateFilter);
-            }
-
-            if (statusFilter) {
-                params.append("status", statusFilter);
-            }
-
-            // Fetch from API
-            const response = await fetch(`/api/sales?${params.toString()}`);
+            const response = await fetch(`/api/sales?limit=1000`);
             if (!response.ok) {
                 throw new Error("Failed to fetch sales");
             }
 
             const data = await response.json();
-            setSales(data.sales);
-            setPagination(data.pagination);
+            setAllSales(data.sales);
+            setFilteredSales(data.sales);
+
+            setPagination({
+                total: data.sales.length,
+                page: 1,
+                limit: ITEMS_PER_PAGE,
+                totalPages: Math.ceil(data.sales.length / ITEMS_PER_PAGE),
+            });
         } catch (error) {
             console.error("Error fetching sales:", error);
             toast.error("Failed to load sales data");
         } finally {
             setIsLoading(false);
         }
+    };
+
+    useEffect(() => {
+        if (!allSales.length) return;
+
+        let filtered = [...allSales];
+
+        if (searchTerm) {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            filtered = filtered.filter(
+                (sale) =>
+                    sale.invoiceNumber
+                        .toLowerCase()
+                        .includes(lowerSearchTerm) ||
+                    (sale.customer?.name &&
+                        sale.customer.name
+                            .toLowerCase()
+                            .includes(lowerSearchTerm))
+            );
+        }
+
+        if (dateFilter) {
+            filtered = filtered.filter((sale) => {
+                const saleDate = new Date(sale.date)
+                    .toISOString()
+                    .split("T")[0];
+                return saleDate === dateFilter;
+            });
+        }
+
+        if (statusFilter) {
+            filtered = filtered.filter((sale) => sale.status === statusFilter);
+        }
+
+        setPagination({
+            total: filtered.length,
+            page: 1,
+            limit: ITEMS_PER_PAGE,
+            totalPages: Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1,
+        });
+
+        setCurrentPage(1);
+        setFilteredSales(filtered);
+    }, [searchTerm, dateFilter, statusFilter, allSales]);
+
+    const getCurrentPageItems = () => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        return filteredSales.slice(startIndex, endIndex);
     };
 
     const deleteSale = async (saleId: string) => {
@@ -131,7 +173,57 @@ export default function SalesPage() {
                 }
 
                 toast.success("Sale deleted successfully");
-                fetchSales(); // Refresh the list
+
+                const updatedSales = allSales.filter(
+                    (sale) => sale.id !== saleId
+                );
+                setAllSales(updatedSales);
+
+                let filtered = [...updatedSales];
+
+                if (searchTerm) {
+                    const lowerSearchTerm = searchTerm.toLowerCase();
+                    filtered = filtered.filter(
+                        (sale) =>
+                            sale.invoiceNumber
+                                .toLowerCase()
+                                .includes(lowerSearchTerm) ||
+                            (sale.customer?.name &&
+                                sale.customer.name
+                                    .toLowerCase()
+                                    .includes(lowerSearchTerm))
+                    );
+                }
+
+                if (dateFilter) {
+                    filtered = filtered.filter((sale) => {
+                        const saleDate = new Date(sale.date)
+                            .toISOString()
+                            .split("T")[0];
+                        return saleDate === dateFilter;
+                    });
+                }
+
+                if (statusFilter) {
+                    filtered = filtered.filter(
+                        (sale) => sale.status === statusFilter
+                    );
+                }
+
+                setFilteredSales(filtered);
+
+                setPagination({
+                    ...pagination,
+                    total: filtered.length,
+                    totalPages:
+                        Math.ceil(filtered.length / ITEMS_PER_PAGE) || 1,
+                });
+
+                if (currentPage > Math.ceil(filtered.length / ITEMS_PER_PAGE)) {
+                    setCurrentPage(
+                        Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
+                    );
+                }
             } catch (error) {
                 console.error("Error deleting sale:", error);
                 toast.error(
@@ -165,6 +257,95 @@ export default function SalesPage() {
         return method.replace(/_/g, " ");
     };
 
+    // Function to convert sales data to CSV format
+    const convertToCSV = (sales: Sale[]) => {
+        if (sales.length === 0) return "";
+
+        // Define CSV header
+        const header = [
+            "Invoice Number",
+            "Date",
+            "Customer",
+            "Total Amount",
+            "Status",
+            "Payment Method",
+            "Discount",
+            "Tax",
+        ].join(",");
+
+        // Convert each sale to a CSV row
+        const rows = sales.map((sale) => {
+            const date = new Date(sale.date).toLocaleDateString();
+            const customerName = sale.customer?.name || "N/A";
+            const amount = sale.totalAmount.toFixed(2);
+            const paymentMethod = sale.paymentMethod.replace(/_/g, " ");
+
+            return [
+                sale.invoiceNumber,
+                date,
+                customerName,
+                amount,
+                sale.status,
+                paymentMethod,
+                `${sale.discount}%`,
+                `${sale.tax}%`,
+            ].join(",");
+        });
+
+        // Combine header and rows
+        return header + "\n" + rows.join("\n");
+    };
+
+    // Function to export sales data as CSV file
+    const exportSalesData = () => {
+        try {
+            // Apply the current filters for the export
+            const dataToExport = filteredSales;
+
+            // If there's no data to export, show a message
+            if (dataToExport.length === 0) {
+                toast.info("No data to export");
+                return;
+            }
+
+            // Convert the data to CSV
+            const csvContent = convertToCSV(dataToExport);
+
+            // Create a Blob with the CSV data
+            const blob = new Blob([csvContent], {
+                type: "text/csv;charset=utf-8;",
+            });
+
+            // Create a download link
+            const link = document.createElement("a");
+
+            // Create a URL for the blob
+            const url = URL.createObjectURL(blob);
+
+            // Set link attributes
+            link.setAttribute("href", url);
+
+            // Generate a filename based on the current date
+            const timestamp = new Date().toISOString().split("T")[0];
+            link.setAttribute("download", `sales-export-${timestamp}.csv`);
+
+            // Append the link to the body
+            document.body.appendChild(link);
+
+            // Click the link to trigger the download
+            link.click();
+
+            // Clean up
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            toast.success("Export completed successfully");
+        } catch (error) {
+            console.error("Error exporting sales data:", error);
+            toast.error("Failed to export sales data");
+        }
+    };
+
     if (status === "loading" || isLoading) {
         return (
             <DashboardLayout>
@@ -175,6 +356,8 @@ export default function SalesPage() {
         );
     }
 
+    const currentItems = getCurrentPageItems();
+
     return (
         <DashboardLayout>
             <div className="space-y-6">
@@ -184,46 +367,45 @@ export default function SalesPage() {
                     </h1>
                     <button
                         onClick={() => router.push("/sales/new")}
-                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark"
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
                     >
                         <FiPlus className="mr-2 h-5 w-5" />
                         New Sale
                     </button>
                 </div>
 
-                {/* Search and filters */}
-                <div className="bg-white shadow rounded-lg p-4 space-y-4">
-                    <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+                <div className="bg-white shadow rounded-lg p-6">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div className="relative flex-1">
                             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <FiSearch className="h-5 w-5 text-tertiary" />
+                                <FiSearch className="h-5 w-5 text-gray-400" />
                             </div>
                             <input
                                 type="text"
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-tertiary focus:outline-none focus:placeholder-text-disabled focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
+                                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                                 placeholder="Search by invoice # or customer"
                             />
                         </div>
 
-                        <div className="sm:w-1/4">
+                        <div className="md:w-1/4">
                             <input
                                 type="date"
                                 value={dateFilter}
                                 onChange={(e) => setDateFilter(e.target.value)}
-                                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                                className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                 aria-label="Filter by date"
                             />
                         </div>
 
-                        <div className="sm:w-1/4">
+                        <div className="md:w-1/4">
                             <select
                                 value={statusFilter}
                                 onChange={(e) =>
                                     setStatusFilter(e.target.value)
                                 }
-                                className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+                                className="block w-full pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                 aria-label="Filter by status"
                             >
                                 <option value="">All Statuses</option>
@@ -235,19 +417,21 @@ export default function SalesPage() {
                     </div>
                 </div>
 
-                {/* Sales Table */}
                 <div className="bg-white shadow overflow-hidden rounded-lg">
                     <div className="px-4 py-5 border-b border-gray-200 sm:px-6 flex justify-between items-center">
                         <h3 className="text-lg leading-6 font-medium text-primary">
                             Recent Sales
                         </h3>
-                        <button className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-secondary bg-white hover:bg-gray-50">
+                        <button
+                            onClick={exportSalesData}
+                            className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-secondary bg-white hover:bg-gray-50"
+                        >
                             <FiDownload className="mr-2 h-4 w-4" />
                             Export
                         </button>
                     </div>
 
-                    {sales.length === 0 ? (
+                    {currentItems.length === 0 ? (
                         <div className="text-center py-12">
                             <svg
                                 className="mx-auto h-12 w-12 text-tertiary"
@@ -268,21 +452,27 @@ export default function SalesPage() {
                                 No sales found
                             </h3>
                             <p className="mt-1 text-sm text-tertiary">
-                                Get started by creating a new sale.
+                                {searchTerm || dateFilter || statusFilter
+                                    ? "Try changing your search criteria"
+                                    : "Get started by creating a new sale."}
                             </p>
-                            <div className="mt-6">
-                                <button
-                                    type="button"
-                                    onClick={() => router.push("/sales/new")}
-                                    className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-                                >
-                                    <FiPlus
-                                        className="-ml-1 mr-2 h-5 w-5"
-                                        aria-hidden="true"
-                                    />
-                                    New Sale
-                                </button>
-                            </div>
+                            {!searchTerm && !dateFilter && !statusFilter && (
+                                <div className="mt-6">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            router.push("/sales/new")
+                                        }
+                                        className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    >
+                                        <FiPlus
+                                            className="-ml-1 mr-2 h-5 w-5"
+                                            aria-hidden="true"
+                                        />
+                                        New Sale
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -334,7 +524,7 @@ export default function SalesPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {sales.map((sale) => (
+                                    {currentItems.map((sale) => (
                                         <tr key={sale.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-primary">
                                                 {sale.invoiceNumber}
@@ -412,28 +602,25 @@ export default function SalesPage() {
                     )}
                 </div>
 
-                {/* Pagination */}
-                {sales.length > 0 && (
+                {filteredSales.length > 0 && (
                     <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
                         <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                             <div>
                                 <p className="text-sm text-secondary">
                                     Showing{" "}
                                     <span className="font-medium">
-                                        {(pagination.page - 1) *
-                                            pagination.limit +
-                                            1}
+                                        {(currentPage - 1) * ITEMS_PER_PAGE + 1}
                                     </span>{" "}
                                     to{" "}
                                     <span className="font-medium">
                                         {Math.min(
-                                            pagination.page * pagination.limit,
-                                            pagination.total
+                                            currentPage * ITEMS_PER_PAGE,
+                                            filteredSales.length
                                         )}
                                     </span>{" "}
                                     of{" "}
                                     <span className="font-medium">
-                                        {pagination.total}
+                                        {filteredSales.length}
                                     </span>{" "}
                                     results
                                 </p>
@@ -470,7 +657,6 @@ export default function SalesPage() {
                                         </svg>
                                     </button>
 
-                                    {/* Page numbers */}
                                     {Array.from(
                                         {
                                             length: Math.min(
@@ -479,14 +665,12 @@ export default function SalesPage() {
                                             ),
                                         },
                                         (_, i) => {
-                                            // Show pages around current page
                                             let pageNum = i + 1;
                                             if (pagination.totalPages > 5) {
                                                 if (currentPage > 3) {
                                                     pageNum =
                                                         currentPage - 3 + i + 1;
                                                 }
-                                                // Don't show more than total pages
                                                 if (
                                                     pageNum >
                                                     pagination.totalPages

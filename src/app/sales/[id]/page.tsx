@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "react-toastify";
@@ -46,6 +46,8 @@ interface Sale {
 }
 
 export default function SaleDetailPage({ params }: { params: { id: string } }) {
+    // Unwrap params using React.use()
+    const { id } = React.use(params);
     const { data: session, status: authStatus } = useSession();
     const router = useRouter();
     const [sale, setSale] = useState<Sale | null>(null);
@@ -58,15 +60,15 @@ export default function SaleDetailPage({ params }: { params: { id: string } }) {
     }, [authStatus, router]);
 
     useEffect(() => {
-        if (authStatus === "authenticated" && params.id) {
+        if (authStatus === "authenticated" && id) {
             fetchSaleDetails();
         }
-    }, [authStatus, params.id]);
+    }, [authStatus, id]);
 
     const fetchSaleDetails = async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`/api/sales/${params.id}`);
+            const response = await fetch(`/api/sales/${id}`);
 
             if (!response.ok) {
                 if (response.status === 404) {
@@ -96,7 +98,7 @@ export default function SaleDetailPage({ params }: { params: { id: string } }) {
             )
         ) {
             try {
-                const response = await fetch(`/api/sales/${params.id}`, {
+                const response = await fetch(`/api/sales/${id}`, {
                     method: "DELETE",
                 });
 

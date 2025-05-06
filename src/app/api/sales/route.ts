@@ -114,6 +114,7 @@ export async function POST(request: NextRequest) {
         const data = await request.json();
         const {
             customerId,
+            newCustomer,
             date,
             paymentMethod,
             status,
@@ -122,14 +123,7 @@ export async function POST(request: NextRequest) {
             tax,
         } = data;
 
-        // Validate required fields
-        if (!customerId) {
-            return NextResponse.json(
-                { error: "Customer is required" },
-                { status: 400 }
-            );
-        }
-
+        // Validate required fields - items are required, but customer can be optional
         if (!items || !Array.isArray(items) || items.length === 0) {
             return NextResponse.json(
                 { error: "At least one item is required" },
@@ -161,95 +155,117 @@ export async function POST(request: NextRequest) {
         }
 
         // Begin transaction to ensure all operations succeed or fail together
-        const result = await prisma.$transaction(async (prisma) => {
-            // Generate invoice number
-            const lastSale = await prisma.sale.findFirst({
-                orderBy: { createdAt: "desc" },
-            });
+        // Increase transaction timeout to 10 seconds (10000ms) to avoid timeout errors
+        const result = await prisma.$transaction(
+            async (prisma) => {
+                // Handle customer - either use existing or create new one
+                let customerIdToUse = customerId;
 
-            const lastInvoiceNum = lastSale
-                ? parseInt(lastSale.invoiceNumber.replace("INV-", ""))
-                : 0;
-            const invoiceNumber = `INV-${(lastInvoiceNum + 1)
-                .toString()
-                .padStart(5, "0")}`;
-
-            // Calculate total amount
-            let totalAmount = 0;
-            const saleItemsData = [];
-
-            for (const item of items) {
-                const itemTotal = item.quantity * item.price;
-                totalAmount += itemTotal;
-
-                saleItemsData.push({
-                    productId: item.productId,
-                    quantity: item.quantity,
-                    price: item.price,
-                    totalPrice: itemTotal,
-                });
-            }
-
-            // Apply discount and tax
-            const discountAmount = (totalAmount * (discount || 0)) / 100;
-            const taxAmount =
-                ((totalAmount - discountAmount) * (tax || 0)) / 100;
-            const finalTotal = totalAmount - discountAmount + taxAmount;
-
-            // Create sale
-            const sale = await prisma.sale.create({
-                data: {
-                    invoiceNumber,
-                    customerId,
-                    userId: session.user?.id,
-                    date: date
-                        ? new Date(date).toISOString()
-                        : new Date().toISOString(),
-                    totalAmount: finalTotal,
-                    discount: discount || 0,
-                    tax: tax || 0,
-                    paymentMethod: paymentMethod || "CASH",
-                    status: status || "PENDING",
-                    saleItems: {
-                        create: saleItemsData,
-                    },
-                },
-                include: {
-                    customer: true,
-                    saleItems: {
-                        include: {
-                            product: true,
+                // If new customer data is provided, create a new customer
+                if (newCustomer && newCustomer.name) {
+                    const createdCustomer = await prisma.customer.create({
+                        data: {
+                            name: newCustomer.name,
+                            phone: newCustomer.phone || null,
                         },
-                    },
-                },
-            });
+                    });
+                    customerIdToUse = createdCustomer.id;
+                }
 
-            // Update product quantities and create inventory logs
-            for (const item of items) {
-                // Update product quantity
-                await prisma.product.update({
-                    where: { id: item.productId },
-                    data: {
-                        quantity: {
-                            decrement: item.quantity,
-                        },
-                    },
+                // Generate invoice number
+                const lastSale = await prisma.sale.findFirst({
+                    orderBy: { createdAt: "desc" },
                 });
 
-                // Create inventory log entry
-                await prisma.inventoryLog.create({
-                    data: {
+                const lastInvoiceNum = lastSale
+                    ? parseInt(lastSale.invoiceNumber.replace("INV-", ""))
+                    : 0;
+                const invoiceNumber = `INV-${(lastInvoiceNum + 1)
+                    .toString()
+                    .padStart(5, "0")}`;
+
+                // Calculate total amount
+                let totalAmount = 0;
+                const saleItemsData = [];
+
+                for (const item of items) {
+                    const itemTotal = item.quantity * item.price;
+                    totalAmount += itemTotal;
+
+                    saleItemsData.push({
                         productId: item.productId,
-                        quantity: -item.quantity, // Negative because it's reducing stock
-                        type: "SALE",
-                        reference: invoiceNumber,
-                        notes: `Sale to ${sale.customer.name}`,
+                        quantity: item.quantity,
+                        price: item.price,
+                        totalPrice: itemTotal,
+                    });
+                }
+
+                // Apply discount and tax
+                const discountAmount = (totalAmount * (discount || 0)) / 100;
+                const taxAmount =
+                    ((totalAmount - discountAmount) * (tax || 0)) / 100;
+                const finalTotal = totalAmount - discountAmount + taxAmount;
+
+                // Create sale
+                const sale = await prisma.sale.create({
+                    data: {
+                        invoiceNumber,
+                        customerId: customerIdToUse,
+                        userId: session.user?.id,
+                        date: date
+                            ? new Date(date).toISOString()
+                            : new Date().toISOString(),
+                        totalAmount: finalTotal,
+                        discount: discount || 0,
+                        tax: tax || 0,
+                        paymentMethod: paymentMethod || "CASH",
+                        status: status || "PENDING",
+                        saleItems: {
+                            create: saleItemsData,
+                        },
+                    },
+                    include: {
+                        customer: true,
+                        saleItems: {
+                            include: {
+                                product: true,
+                            },
+                        },
                     },
                 });
-            }
 
-            return sale;
-        });
+                // Update product quantities and create inventory logs
+                for (const item of items) {
+                    // Update product quantity
+                    await prisma.product.update({
+                        where: { id: item.productId },
+                        data: {
+                            quantity: {
+                                decrement: item.quantity,
+                            },
+                        },
+                    });
+
+                    // Create inventory log entry
+                    await prisma.inventoryLog.create({
+                        data: {
+                            productId: item.productId,
+                            quantity: -item.quantity, // Negative because it's reducing stock
+                            type: "SALE",
+                            reference: invoiceNumber,
+                            notes: `Sale to ${
+                                sale.customer?.name || "Unknown Customer"
+                            }`,
+                        },
+                    });
+                }
+
+                return sale;
+            },
+            {
+                timeout: 10000, // Set timeout to 10 seconds (10000ms)
+            }
+        );
 
         return NextResponse.json(result, { status: 201 });
     } catch (error) {

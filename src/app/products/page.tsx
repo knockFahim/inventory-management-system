@@ -40,6 +40,7 @@ export default function ProductsPage() {
     const { data: session, status } = useSession();
     const router = useRouter();
     const [products, setProducts] = useState<Product[]>([]);
+    const [allProducts, setAllProducts] = useState<Product[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -57,26 +58,14 @@ export default function ProductsPage() {
         }
     }, [status, router]);
 
-    // Fetch products with filtering
+    // Fetch all products initially
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
-            let url = `/api/products?sort=${sortOption}`;
-
-            if (searchTerm) {
-                url += `&search=${encodeURIComponent(searchTerm)}`;
-            }
-
-            if (selectedCategory) {
-                url += `&categoryId=${selectedCategory}`;
-            }
-
-            if (showLowStock) {
-                url += "&lowStock=true";
-            }
-
-            const response = await axios.get(url);
-            setProducts(response.data);
+            const response = await axios.get(`/api/products`);
+            const fetchedProducts = response.data;
+            setAllProducts(fetchedProducts);
+            setProducts(fetchedProducts);
         } catch (error) {
             console.error("Error fetching products:", error);
             toast.error("Failed to load products");
@@ -107,11 +96,67 @@ export default function ProductsPage() {
             fetchCategories();
             fetchProducts();
         }
-    }, [status, searchTerm, selectedCategory, showLowStock, sortOption]);
+    }, [status]);
+
+    // Apply filters client-side
+    useEffect(() => {
+        if (!allProducts.length) return;
+
+        let filteredProducts = [...allProducts];
+
+        // Apply search filter
+        if (searchTerm) {
+            const lowerSearchTerm = searchTerm.toLowerCase();
+            filteredProducts = filteredProducts.filter(
+                (product) =>
+                    product.name.toLowerCase().includes(lowerSearchTerm) ||
+                    product.sku.toLowerCase().includes(lowerSearchTerm) ||
+                    (product.description &&
+                        product.description
+                            .toLowerCase()
+                            .includes(lowerSearchTerm))
+            );
+        }
+
+        // Apply category filter
+        if (selectedCategory) {
+            filteredProducts = filteredProducts.filter(
+                (product) => product.category.id === selectedCategory
+            );
+        }
+
+        // Apply low stock filter
+        if (showLowStock) {
+            filteredProducts = filteredProducts.filter(
+                (product) => product.quantity <= product.minimumStock
+            );
+        }
+
+        // Apply sorting
+        const [sortField, sortDirection] = sortOption.split(":");
+        filteredProducts.sort((a, b) => {
+            if (sortField === "name") {
+                return sortDirection === "asc"
+                    ? a.name.localeCompare(b.name)
+                    : b.name.localeCompare(a.name);
+            } else if (sortField === "price") {
+                return sortDirection === "asc"
+                    ? a.price - b.price
+                    : b.price - a.price;
+            } else if (sortField === "quantity") {
+                return sortDirection === "asc"
+                    ? a.quantity - b.quantity
+                    : b.quantity - a.quantity;
+            }
+            return 0;
+        });
+
+        setProducts(filteredProducts);
+    }, [allProducts, searchTerm, selectedCategory, showLowStock, sortOption]);
 
     const handleSearch = (event: React.FormEvent) => {
         event.preventDefault();
-        fetchProducts();
+        // No need to do anything here as the useEffect will handle filtering
     };
 
     const handleDelete = async (product: Product) => {

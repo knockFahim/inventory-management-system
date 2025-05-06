@@ -14,6 +14,7 @@
     --text-secondary: #000000; /* black */
     --text-tertiary: #000000; /* black */
     --text-disabled: #000000; /* black */
+    --placeholder-color: #000000; /* black */
 
     /* Status colors */
     --success: #10b981; /* green-500 */
@@ -34,11 +35,12 @@
         --background: #0a0a0a;
         --foreground: #ededed;
 
-        /* Dark mode text colors - all set to white for maximum visibility */
-        --text-primary: #ffffff; /* white */
-        --text-secondary: #ffffff; /* white */
-        --text-tertiary: #ffffff; /* white */
-        --text-disabled: #ffffff; /* white */
+        /* Dark mode text colors - all set to black for maximum visibility (overriding defaults) */
+        --text-primary: #000000; /* black */
+        --text-secondary: #000000; /* black */
+        --text-tertiary: #000000; /* black */
+        --text-disabled: #000000; /* black */
+        --placeholder-color: #000000; /* black */
     }
 }
 
@@ -74,4 +76,38 @@ body {
     background: var(--background);
     color: var(--foreground);
     font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Override placeholder and input text colors to ensure they're always black */
+::placeholder {
+    color: #000000 !important;
+    opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder {
+    color: #000000 !important;
+}
+
+::-ms-input-placeholder {
+    color: #000000 !important;
+}
+
+input,
+textarea,
+select,
+option {
+    color: #000000 !important;
+}
+
+/* Ensure text in dropdowns is black */
+select option {
+    color: #000000 !important;
+}
+
+/* Override any tailwind placeholder color classes */
+.placeholder-gray-500::placeholder,
+.placeholder-tertiary::placeholder,
+.placeholder-gray-400::placeholder,
+.placeholder-text-disabled::placeholder {
+    color: #000000 !important;
 }

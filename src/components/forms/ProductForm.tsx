@@ -184,7 +184,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         type="text"
                         id="name"
                         {...register("name")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                        className={`mt-1 py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-black ${
                             errors.name ? "border-red-500" : ""
                         }`}
                     />
@@ -206,7 +206,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         type="text"
                         id="sku"
                         {...register("sku")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                        className={`mt-1 py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-black ${
                             errors.sku ? "border-red-500" : ""
                         }`}
                     />
@@ -228,7 +228,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="description"
                         rows={3}
                         {...register("description")}
-                        className="mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-900"
+                        className="mt-1 py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-black"
                     />
                     {errors.description && (
                         <p className="mt-1 text-sm text-error">
@@ -247,18 +247,18 @@ export default function ProductForm({ productId }: ProductFormProps) {
                     <select
                         id="categoryId"
                         {...register("categoryId")}
-                        className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white text-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
+                        className={`mt-1 block w-full py-2 px-3 border border-gray-300 bg-white text-black rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm ${
                             errors.categoryId ? "border-red-500" : ""
                         }`}
                     >
-                        <option value="" className="text-gray-700">
+                        <option value="" className="text-black">
                             Select a category
                         </option>
                         {categories.map((category) => (
                             <option
                                 key={category.id}
                                 value={category.id}
-                                className="text-gray-700"
+                                className="text-black"
                             >
                                 {category.name}
                             </option>
@@ -288,7 +288,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             step="0.01"
                             min="0"
                             {...register("price")}
-                            className={`focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                            className={`py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md text-black ${
                                 errors.price ? "border-red-500" : ""
                             }`}
                         />
@@ -317,7 +317,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                             step="0.01"
                             min="0"
                             {...register("costPrice")}
-                            className={`focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                            className={`py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md text-black ${
                                 errors.costPrice ? "border-red-500" : ""
                             }`}
                         />
@@ -341,7 +341,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="quantity"
                         min="0"
                         {...register("quantity")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                        className={`mt-1 py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-black ${
                             errors.quantity ? "border-red-500" : ""
                         }`}
                     />
@@ -364,7 +364,7 @@ export default function ProductForm({ productId }: ProductFormProps) {
                         id="minimumStock"
                         min="0"
                         {...register("minimumStock")}
-                        className={`mt-1 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-gray-900 ${
+                        className={`mt-1 py-2 px-3 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md text-black ${
                             errors.minimumStock ? "border-red-500" : ""
                         }`}
                     />

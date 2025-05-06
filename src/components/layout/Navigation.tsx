@@ -49,7 +49,7 @@ const Navigation = () => {
                                     href="/dashboard"
                                     className="font-bold text-xl text-brand"
                                 >
-                                    ShopInventory
+                                    Shop Inventory
                                 </Link>
                             </div>
                             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
