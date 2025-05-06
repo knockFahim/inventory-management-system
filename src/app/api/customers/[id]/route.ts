@@ -6,7 +6,7 @@ import prisma from "@/lib/db";
 // GET /api/customers/[id] - Get a specific customer by ID
 export async function GET(
     request: NextRequest,
-    context: { params: { id: string } }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -17,7 +17,7 @@ export async function GET(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
 
         const customer = await prisma.customer.findUnique({
             where: { id },
@@ -50,7 +50,7 @@ export async function GET(
 // PUT /api/customers/[id] - Update a customer
 export async function PUT(
     request: NextRequest,
-    context: { params: { id: string } }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -61,7 +61,7 @@ export async function PUT(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
         const data = await request.json();
 
         // Check if customer exists
@@ -124,7 +124,7 @@ export async function PUT(
 // DELETE /api/customers/[id] - Delete a customer
 export async function DELETE(
     request: NextRequest,
-    context: { params: { id: string } }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -135,7 +135,7 @@ export async function DELETE(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
 
         // Check if customer exists
         const customer = await prisma.customer.findUnique({

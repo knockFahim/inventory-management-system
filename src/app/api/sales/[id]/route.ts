@@ -6,7 +6,7 @@ import prisma from "@/lib/db";
 // GET /api/sales/[id] - Get a single sale by ID
 export async function GET(
     request: Request,
-    context: { params: { id: string } }
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -17,7 +17,7 @@ export async function GET(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
 
         const sale = await prisma.sale.findUnique({
             where: { id },
@@ -62,8 +62,8 @@ export async function GET(
 
 // PUT /api/sales/[id] - Update a sale
 export async function PUT(
-    request: Request,
-    context: { params: { id: string } }
+    request: NextRequest,
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -74,7 +74,7 @@ export async function PUT(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
         const data = await request.json();
         const { customerId, date, paymentMethod, status, discount, tax } = data;
 
@@ -159,8 +159,8 @@ export async function PUT(
 
 // DELETE /api/sales/[id] - Delete a sale
 export async function DELETE(
-    request: Request,
-    context: { params: { id: string } }
+    request: NextRequest,
+    { params }: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -171,7 +171,7 @@ export async function DELETE(
             );
         }
 
-        const { id } = context.params;
+        const { id } = params;
 
         // Check if sale exists
         const sale = await prisma.sale.findUnique({
