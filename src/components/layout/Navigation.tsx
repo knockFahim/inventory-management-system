@@ -59,8 +59,8 @@ const Navigation = () => {
                                         href={item.href}
                                         className={`${
                                             isActive(item.href)
-                                                ? "border-primary text-primary"
-                                                : "border-transparent text-tertiary hover:text-secondary hover:border-primary/50"
+                                                ? "border-primary text-black font-semibold"
+                                                : "border-transparent text-gray-600 hover:text-gray-800 hover:border-primary/50"
                                         } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium`}
                                     >
                                         <item.icon className="mr-2 h-5 w-5" />
@@ -88,14 +88,14 @@ const Navigation = () => {
                                         <span className="sr-only">
                                             Open user menu
                                         </span>
-                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-secondary">
+                                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-gray-800">
                                             {session?.user?.name?.charAt(0) ||
                                                 "U"}
                                         </div>
-                                        <span className="ml-2 text-secondary">
+                                        <span className="ml-2 text-gray-800">
                                             {session?.user?.name || "User"}
                                         </span>
-                                        <FiChevronDown className="ml-1 h-4 w-4 text-secondary" />
+                                        <FiChevronDown className="ml-1 h-4 w-4 text-gray-800" />
                                     </button>
                                 </div>
 
@@ -109,7 +109,7 @@ const Navigation = () => {
                                     >
                                         <button
                                             onClick={handleSignOut}
-                                            className="w-full text-left px-4 py-2 text-sm text-secondary hover:bg-primary/5 flex items-center"
+                                            className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 flex items-center"
                                             role="menuitem"
                                         >
                                             <FiLogOut className="mr-2 h-4 w-4" />
@@ -157,8 +157,8 @@ const Navigation = () => {
                                     href={item.href}
                                     className={`${
                                         isActive(item.href)
-                                            ? "bg-primary/5 border-primary text-brand"
-                                            : "border-transparent text-tertiary hover:bg-primary/5 hover:border-primary/50 hover:text-secondary"
+                                            ? "bg-primary/5 border-primary text-black font-semibold"
+                                            : "border-transparent text-gray-600 hover:bg-primary/5 hover:border-primary/50 hover:text-gray-800"
                                     } block pl-3 pr-4 py-2 border-l-4 text-base font-medium flex items-center`}
                                 >
                                     <item.icon className="mr-3 h-5 w-5 flex-shrink-0" />
@@ -169,15 +169,15 @@ const Navigation = () => {
                         <div className="pt-4 pb-3 border-t border-primary/10">
                             <div className="flex items-center px-4">
                                 <div className="flex-shrink-0">
-                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-secondary text-lg">
+                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center text-gray-800 text-lg">
                                         {session?.user?.name?.charAt(0) || "U"}
                                     </div>
                                 </div>
                                 <div className="ml-3">
-                                    <div className="text-base font-medium text-primary">
+                                    <div className="text-base font-medium text-gray-800">
                                         {session?.user?.name || "User"}
                                     </div>
-                                    <div className="text-sm font-medium text-secondary">
+                                    <div className="text-sm font-medium text-gray-600">
                                         {session?.user?.email}
                                     </div>
                                 </div>
@@ -185,9 +185,9 @@ const Navigation = () => {
                             <div className="mt-3 space-y-1">
                                 <button
                                     onClick={handleSignOut}
-                                    className="block w-full text-left px-4 py-2 text-base font-medium text-secondary hover:text-secondary hover:bg-primary/5 flex items-center"
+                                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-primary/5 flex items-center"
                                 >
-                                    <FiLogOut className="mr-3 h-5 w-5 text-secondary" />
+                                    <FiLogOut className="mr-3 h-5 w-5 text-gray-700" />
                                     Sign out
                                 </button>
                             </div>

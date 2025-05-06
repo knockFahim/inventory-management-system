@@ -191,13 +191,19 @@ export default function ProductsPage() {
                                         onChange={(e) =>
                                             setSelectedCategory(e.target.value)
                                         }
-                                        className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                        className="block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                     >
-                                        <option value="">All Categories</option>
+                                        <option
+                                            value=""
+                                            className="text-gray-700"
+                                        >
+                                            All Categories
+                                        </option>
                                         {categories.map((category) => (
                                             <option
                                                 key={category.id}
                                                 value={category.id}
+                                                className="text-gray-700"
                                             >
                                                 {category.name}
                                             </option>
@@ -216,22 +222,42 @@ export default function ProductsPage() {
                                     onChange={(e) =>
                                         setSortOption(e.target.value)
                                     }
-                                    className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+                                    className="block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
                                 >
-                                    <option value="name:asc">Name (A-Z)</option>
-                                    <option value="name:desc">
+                                    <option
+                                        value="name:asc"
+                                        className="text-gray-700"
+                                    >
+                                        Name (A-Z)
+                                    </option>
+                                    <option
+                                        value="name:desc"
+                                        className="text-gray-700"
+                                    >
                                         Name (Z-A)
                                     </option>
-                                    <option value="price:asc">
+                                    <option
+                                        value="price:asc"
+                                        className="text-gray-700"
+                                    >
                                         Price (Low to High)
                                     </option>
-                                    <option value="price:desc">
+                                    <option
+                                        value="price:desc"
+                                        className="text-gray-700"
+                                    >
                                         Price (High to Low)
                                     </option>
-                                    <option value="quantity:asc">
+                                    <option
+                                        value="quantity:asc"
+                                        className="text-gray-700"
+                                    >
                                         Stock (Low to High)
                                     </option>
-                                    <option value="quantity:desc">
+                                    <option
+                                        value="quantity:desc"
+                                        className="text-gray-700"
+                                    >
                                         Stock (High to Low)
                                     </option>
                                 </select>
@@ -408,13 +434,14 @@ export default function ProductsPage() {
 
             {/* Delete Confirmation Modal */}
             {isDeleteModalOpen && productToDelete && (
-                <div className="fixed z-10 inset-0 overflow-y-auto">
+                <div className="fixed z-50 inset-0 overflow-y-auto">
                     <div className="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
                         <div
                             className="fixed inset-0 transition-opacity"
                             aria-hidden="true"
+                            onClick={() => setIsDeleteModalOpen(false)}
                         >
-                            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                            <div className="absolute inset-0 bg-gray-500 opacity-50"></div>
                         </div>
                         <span
                             className="hidden sm:inline-block sm:align-middle sm:h-screen"
@@ -422,7 +449,7 @@ export default function ProductsPage() {
                         >
                             &#8203;
                         </span>
-                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+                        <div className="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6 relative z-50">
                             <div>
                                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
                                     <FiTrash2 className="h-6 w-6 text-red-600" />
