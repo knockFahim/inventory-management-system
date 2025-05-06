@@ -6,7 +6,7 @@ import prisma from "@/lib/db";
 // GET /api/sales/[id] - Get a single sale by ID
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -17,7 +17,7 @@ export async function GET(
             );
         }
 
-        const { id } = params;
+        const { id } = context.params;
 
         const sale = await prisma.sale.findUnique({
             where: { id },
@@ -63,7 +63,7 @@ export async function GET(
 // PUT /api/sales/[id] - Update a sale
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -74,7 +74,7 @@ export async function PUT(
             );
         }
 
-        const { id } = params;
+        const { id } = context.params;
         const data = await request.json();
         const { customerId, date, paymentMethod, status, discount, tax } = data;
 
@@ -160,7 +160,7 @@ export async function PUT(
 // DELETE /api/sales/[id] - Delete a sale
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -171,7 +171,7 @@ export async function DELETE(
             );
         }
 
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if sale exists
         const sale = await prisma.sale.findUnique({

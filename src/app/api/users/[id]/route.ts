@@ -5,12 +5,9 @@ import prisma from "@/lib/db";
 import bcrypt from "bcryptjs";
 
 // GET /api/users/[id] - Get a specific user by ID
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, context: { params: { id: string } }) {
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if user is authenticated
         const session = await getServerSession(authOptions);
@@ -62,12 +59,9 @@ export async function GET(
 }
 
 // PUT /api/users/[id] - Update a specific user
-export async function PUT(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request, context: { params: { id: string } }) {
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if user is authenticated
         const session = await getServerSession(authOptions);
@@ -213,10 +207,10 @@ export async function PUT(
 // DELETE /api/users/[id] - Delete a specific user
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if user is authenticated
         const session = await getServerSession(authOptions);

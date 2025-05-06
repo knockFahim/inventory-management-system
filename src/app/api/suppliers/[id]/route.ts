@@ -6,7 +6,7 @@ import { authOptions } from "@/lib/authOptions";
 // GET /api/suppliers/[id] - Get a specific supplier
 export async function GET(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -19,7 +19,7 @@ export async function GET(
             );
         }
 
-        const supplierId = params.id;
+        const supplierId = context.params.id;
 
         // Find the supplier
         const supplier = await prisma.supplier.findUnique({
@@ -69,7 +69,7 @@ export async function GET(
 // PUT /api/suppliers/[id] - Update a supplier
 export async function PUT(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -90,7 +90,7 @@ export async function PUT(
             );
         }
 
-        const supplierId = params.id;
+        const supplierId = context.params.id;
         const data = await request.json();
 
         // Validate required fields
@@ -137,7 +137,7 @@ export async function PUT(
 // DELETE /api/suppliers/[id] - Delete a supplier
 export async function DELETE(
     request: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         const session = await getServerSession(authOptions);
@@ -158,7 +158,7 @@ export async function DELETE(
             );
         }
 
-        const supplierId = params.id;
+        const supplierId = context.params.id;
 
         // Check if the supplier has associated purchases
         const purchasesCount = await prisma.purchase.count({

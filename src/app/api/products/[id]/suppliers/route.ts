@@ -3,12 +3,9 @@ import prisma from "@/lib/db";
 import { authorizeRole } from "@/lib/auth";
 
 // GET /api/products/[id]/suppliers - Get all suppliers for a product
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, context: { params: { id: string } }) {
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if product exists
         const product = await prisma.product.findUnique({
@@ -41,10 +38,7 @@ export async function GET(
 }
 
 // POST /api/products/[id]/suppliers - Add a supplier to a product
-export async function POST(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function POST(req: Request, context: { params: { id: string } }) {
     try {
         // Authorization check - only admin and manager can associate suppliers with products
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -53,7 +47,7 @@ export async function POST(
         ]);
         if (authError) return authError;
 
-        const { id: productId } = params;
+        const { id: productId } = context.params;
         const data = await req.json();
         const { supplierId, isPreferred, unitPrice, notes } = data;
 
@@ -148,7 +142,7 @@ export async function POST(
 // DELETE /api/products/[id]/suppliers?supplierId=xxx - Remove a supplier from a product
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         // Authorization check - only admin can remove supplier associations
@@ -157,7 +151,7 @@ export async function DELETE(
         ]);
         if (authError) return authError;
 
-        const { id: productId } = params;
+        const { id: productId } = context.params;
         const { searchParams } = new URL(req.url);
         const supplierId = searchParams.get("supplierId");
 
@@ -206,10 +200,7 @@ export async function DELETE(
 }
 
 // PATCH /api/products/[id]/suppliers/[supplierId] - Update a product-supplier relationship
-export async function PATCH(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function PATCH(req: Request, context: { params: { id: string } }) {
     try {
         // Authorization check - only admin and manager can update supplier associations
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -218,7 +209,7 @@ export async function PATCH(
         ]);
         if (authError) return authError;
 
-        const { id: productId } = params;
+        const { id: productId } = context.params;
         const data = await req.json();
         const { supplierId, isPreferred, unitPrice, notes } = data;
 

@@ -3,12 +3,9 @@ import prisma from "@/lib/db";
 import { authorizeRole } from "@/lib/auth";
 
 // GET /api/products/[id] - Get a specific product
-export async function GET(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function GET(req: Request, context: { params: { id: string } }) {
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         // First try to get the product with the full include
         try {
@@ -68,10 +65,7 @@ export async function GET(
 }
 
 // PUT /api/products/[id] - Update a product
-export async function PUT(
-    req: Request,
-    { params }: { params: { id: string } }
-) {
+export async function PUT(req: Request, context: { params: { id: string } }) {
     try {
         // Authorization check - only admin and manager can update products
         const authError = await authorizeRole(req, NextResponse.next(), [
@@ -80,7 +74,7 @@ export async function PUT(
         ]);
         if (authError) return authError;
 
-        const { id } = params;
+        const { id } = context.params;
         const data = await req.json();
 
         // Check if product exists
@@ -156,7 +150,7 @@ export async function PUT(
 // DELETE /api/products/[id] - Delete a product
 export async function DELETE(
     req: Request,
-    { params }: { params: { id: string } }
+    context: { params: { id: string } }
 ) {
     try {
         // Authorization check - only admin can delete products
@@ -165,7 +159,7 @@ export async function DELETE(
         ]);
         if (authError) return authError;
 
-        const { id } = params;
+        const { id } = context.params;
 
         // Check if product exists
         const existingProduct = await prisma.product.findUnique({
