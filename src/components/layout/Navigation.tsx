@@ -15,6 +15,8 @@ import {
     FiX,
     FiLogOut,
     FiChevronDown,
+    FiUser,
+    FiTruck,
 } from "react-icons/fi";
 
 const Navigation = () => {
@@ -28,6 +30,8 @@ const Navigation = () => {
         { name: "Products", href: "/products", icon: FiBox },
         { name: "Inventory", href: "/inventory", icon: FiBarChart2 },
         { name: "Sales", href: "/sales", icon: FiShoppingCart },
+        { name: "Suppliers", href: "/suppliers", icon: FiTruck },
+        { name: "Customers", href: "/customers", icon: FiUsers },
     ];
 
     const isActive = (path: string) => {
@@ -107,6 +111,30 @@ const Navigation = () => {
                                         aria-orientation="vertical"
                                         aria-labelledby="user-menu"
                                     >
+                                        <Link
+                                            href="/profile"
+                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 flex items-center"
+                                            role="menuitem"
+                                            onClick={() =>
+                                                setIsProfileMenuOpen(false)
+                                            }
+                                        >
+                                            <FiUser className="mr-2 h-4 w-4" />
+                                            My Profile
+                                        </Link>
+                                        {session?.user?.role === "ADMIN" && (
+                                            <Link
+                                                href="/users"
+                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 flex items-center"
+                                                role="menuitem"
+                                                onClick={() =>
+                                                    setIsProfileMenuOpen(false)
+                                                }
+                                            >
+                                                <FiUsers className="mr-2 h-4 w-4" />
+                                                User Management
+                                            </Link>
+                                        )}
                                         <button
                                             onClick={handleSignOut}
                                             className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-primary/5 flex items-center"
@@ -183,6 +211,22 @@ const Navigation = () => {
                                 </div>
                             </div>
                             <div className="mt-3 space-y-1">
+                                <Link
+                                    href="/profile"
+                                    className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-primary/5 flex items-center"
+                                >
+                                    <FiUser className="mr-3 h-5 w-5 text-gray-700" />
+                                    My Profile
+                                </Link>
+                                {session?.user?.role === "ADMIN" && (
+                                    <Link
+                                        href="/users"
+                                        className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-primary/5 flex items-center"
+                                    >
+                                        <FiUsers className="mr-3 h-5 w-5 text-gray-700" />
+                                        User Management
+                                    </Link>
+                                )}
                                 <button
                                     onClick={handleSignOut}
                                     className="block w-full text-left px-4 py-2 text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-primary/5 flex items-center"

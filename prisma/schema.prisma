@@ -47,34 +47,53 @@ model Category {
 
 // Product model
 model Product {
-  id              String          @id @default(uuid())
+  id              String            @id @default(uuid())
   name            String
-  sku             String          @unique
+  sku             String            @unique
   description     String?
   price           Float
   costPrice       Float
-  quantity        Int             @default(0)
-  minimumStock    Int             @default(10)
+  quantity        Int               @default(0)
+  minimumStock    Int               @default(10)
   categoryId      String
-  category        Category        @relation(fields: [categoryId], references: [id])
-  userId          String          // User who added/updated this product
-  user            User            @relation(fields: [userId], references: [id])
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
-  purchaseItems   PurchaseItem[]  // Purchase items associated with this product
-  saleItems       SaleItem[]      // Sale items associated with this product
+  category        Category          @relation(fields: [categoryId], references: [id])
+  userId          String            // User who added/updated this product
+  user            User              @relation(fields: [userId], references: [id])
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  purchaseItems   PurchaseItem[]    // Purchase items associated with this product
+  saleItems       SaleItem[]        // Sale items associated with this product
+  suppliers       ProductSupplier[] // Suppliers for this product
 }
 
 // Supplier model
 model Supplier {
-  id          String      @id @default(uuid())
+  id          String            @id @default(uuid())
   name        String
   email       String?
   phone       String?
   address     String?
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  purchases   Purchase[]  // Purchases from this supplier
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  purchases   Purchase[]        // Purchases from this supplier
+  products    ProductSupplier[] // Products supplied by this supplier
+}
+
+// ProductSupplier join model for many-to-many relationship
+model ProductSupplier {
+  id          String   @id @default(uuid())
+  productId   String
+  supplierId  String
+  isPreferred Boolean  @default(false) // Mark as preferred supplier
+  unitPrice   Float?   // Optional supplier-specific unit price
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  product     Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, supplierId]) // Ensure unique product-supplier combinations
 }
 
 // Purchase model (inventory receiving)

@@ -11,16 +11,39 @@ interface RouteParams {
 // GET /api/products/[id] - Get a specific product
 export async function GET(req: NextRequest, { params }: RouteParams) {
     try {
-        const { id } = params;
+        const { id } = await Promise.resolve(params);
 
-        const product = await prisma.product.findUnique({
+        // First try to get the product with the full include
+        try {
+            const product = await prisma.product.findUnique({
+                where: { id },
+                include: {
+                    category: true,
+                    suppliers: {
+                        include: {
+                            supplier: true,
+                        },
+                    },
+                },
+            });
+
+            if (product) {
+                return NextResponse.json(product);
+            }
+        } catch (includeError) {
+            console.error("Error including relations:", includeError);
+            // If including the relations fails, try without the suppliers
+        }
+
+        // Fallback to just get the basic product with category
+        const basicProduct = await prisma.product.findUnique({
             where: { id },
             include: {
                 category: true,
             },
         });
 
-        if (!product) {
+        if (!basicProduct) {
             return new NextResponse(
                 JSON.stringify({ message: "Product not found" }),
                 {
@@ -30,7 +53,11 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
             );
         }
 
-        return NextResponse.json(product);
+        // Return the basic product with an empty suppliers array
+        return NextResponse.json({
+            ...basicProduct,
+            suppliers: [],
+        });
     } catch (error) {
         console.error("Error fetching product:", error);
         return new NextResponse(
@@ -53,7 +80,7 @@ export async function PUT(req: NextRequest, { params }: RouteParams) {
         ]);
         if (authError) return authError;
 
-        const { id } = params;
+        const { id } = await Promise.resolve(params);
         const data = await req.json();
 
         // Check if product exists
@@ -135,7 +162,7 @@ export async function DELETE(req: NextRequest, { params }: RouteParams) {
         ]);
         if (authError) return authError;
 
-        const { id } = params;
+        const { id } = await Promise.resolve(params);
 
         // Check if product exists
         const existingProduct = await prisma.product.findUnique({

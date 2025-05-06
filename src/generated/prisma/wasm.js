@@ -163,6 +163,17 @@ exports.Prisma.SupplierScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ProductSupplierScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  supplierId: 'supplierId',
+  isPreferred: 'isPreferred',
+  unitPrice: 'unitPrice',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.PurchaseScalarFieldEnum = {
   id: 'id',
   invoiceNumber: 'invoiceNumber',
@@ -277,6 +288,7 @@ exports.Prisma.ModelName = {
   Category: 'Category',
   Product: 'Product',
   Supplier: 'Supplier',
+  ProductSupplier: 'ProductSupplier',
   Purchase: 'Purchase',
   PurchaseItem: 'PurchaseItem',
   Customer: 'Customer',

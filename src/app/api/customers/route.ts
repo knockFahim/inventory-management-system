@@ -73,7 +73,19 @@ export async function POST(request: Request) {
         }
 
         const data = await request.json();
-        const { name, email, phone, address } = data;
+        const {
+            name,
+            email,
+            phone,
+            address,
+            houseNumber,
+            road,
+            city,
+            state,
+            postalCode,
+            country,
+            notes,
+        } = data;
 
         // Validate required fields
         if (!name) {
@@ -97,13 +109,20 @@ export async function POST(request: Request) {
             }
         }
 
-        // Create customer
+        // Create customer with all fields
         const customer = await prisma.customer.create({
             data: {
                 name,
                 email,
                 phone,
                 address,
+                houseNumber,
+                road,
+                city,
+                state,
+                postalCode,
+                country,
+                notes,
             },
         });
 

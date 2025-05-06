@@ -116,14 +116,21 @@ model PurchaseItem {
 
 // Customer model
 model Customer {
-  id        String   @id @default(uuid())
-  name      String
-  email     String?
-  phone     String?
-  address   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  sales     Sale[] // Sales to this customer
+  id          String   @id @default(uuid())
+  name        String
+  email       String?
+  phone       String?
+  address     String? // This can store the street address line 1
+  houseNumber String? // New field for house number
+  road        String? // New field for road/street name
+  city        String? // New field for city
+  state       String? // New field for state/province
+  postalCode  String? // New field for postal code
+  country     String? // New field for country
+  notes       String? // New field for notes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  sales       Sale[] // Sales to this customer
 }
 
 // Sale model (inventory outgoing)
